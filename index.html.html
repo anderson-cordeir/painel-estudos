@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Painel de Estudos — Auditor de Controle Externo | TCE-PE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* ── bege & marrom, suave ── */
+  --paper:#EDE3D0; --card:#F6EFDF; --card-2:#F1E8D5;
+  --rule:#DCCDB2; --rule-soft:#E6DAC3;
+  --ink:#6E5638;         /* texto base: marrom */
+  --ink-strong:#3E2C18;  /* negrito: marrom escuro */
+  --ink-2:#87714F;       /* marrom médio */
+  --ink-3:#AC9776;       /* marrom claro / apagado */
+  --brand:#7A5A34;       /* marrom de destaque */
+  --brand-deep:#5A3F22;
+  --mat:#7A5A34;
+  /* zonas — versões terrosas e suaves */
+  --red:#B06A54; --amber:#BF9A4E; --green:#7E9560;
+  --red-fill:#E8D2C5; --amber-fill:#EDE0C2; --green-fill:#DFE5CC;
+  --red-soft:#EDDDD2; --amber-soft:#F0E6CE; --green-soft:#E4E9D5;
+  --shadow:0 1px 2px rgba(90,63,34,.05), 0 3px 10px rgba(90,63,34,.05);
+  --shadow-lg:0 2px 6px rgba(90,63,34,.06), 0 14px 34px rgba(90,63,34,.09);
+  --serif:'Fraunces', Georgia, serif;
+  --sans:'Inter', system-ui, -apple-system, sans-serif;
+  --mono:'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  --r:8px; --r-lg:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%; scroll-behavior:smooth}
+body{
+  background:var(--paper); color:var(--ink); font-family:var(--sans);
+  font-size:15px; line-height:1.6; min-height:100vh;
+  background-image:repeating-linear-gradient(to bottom, transparent 0 33px, rgba(122,90,52,.035) 33px 34px);
+  -webkit-tap-highlight-color:transparent;
+}
+b,strong{color:var(--ink-strong); font-weight:600}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+input,textarea,select{font:inherit;color:inherit}
+a{color:inherit}
+::selection{background:#DCC9A6}
+:focus-visible{outline:2px solid var(--brand); outline-offset:2px}
+
+/* ── LOGIN ── */
+.login{
+  position:fixed; inset:0; z-index:200; background:var(--paper);
+  display:flex; align-items:center; justify-content:center; padding:1.4rem;
+  background-image:radial-gradient(ellipse at 50% 22%, rgba(122,90,52,.08), transparent 62%),
+    repeating-linear-gradient(to bottom, transparent 0 33px, rgba(122,90,52,.035) 33px 34px);
+}
+.login-card{
+  width:100%; max-width:360px; background:var(--card); border:1px solid var(--rule);
+  border-radius:var(--r-lg); box-shadow:var(--shadow-lg); padding:2.2rem 1.8rem; text-align:center;
+}
+.login-selo{
+  width:46px; height:46px; margin:0 auto 1rem; border-radius:50%; background:var(--brand);
+  display:flex; align-items:center; justify-content:center; color:var(--card);
+  font-family:var(--serif); font-size:1.4rem; font-weight:600;
+}
+.login-card h1{font-family:var(--serif); font-size:1.4rem; font-weight:600; color:var(--ink-strong); line-height:1.2}
+.login-card .frase{font-family:var(--serif); font-style:italic; font-size:.98rem; color:var(--ink-2); margin-top:.5rem}
+.login-campos{margin-top:1.5rem; display:flex; flex-direction:column; gap:.7rem}
+.login-campos input{
+  padding:12px 14px; border:1px solid var(--rule); border-radius:var(--r); background:#FBF6EA;
+  font-size:15px; text-align:center;
+}
+.login-campos input:focus{outline:none; border-color:var(--brand)}
+.login-btn{
+  margin-top:.3rem; padding:12px; border-radius:var(--r); background:var(--brand); color:var(--card);
+  font-weight:600; letter-spacing:.02em; transition:.2s;
+}
+.login-btn:hover{background:var(--brand-deep)}
+.login-erro{color:var(--red); font-size:13px; margin-top:.8rem; min-height:18px}
+.app-oculto{display:none !important}
+
+/* ── TOPO (reduzido) + FRASE ── */
+.topo{background:var(--card); border-bottom:1px solid var(--rule)}
+.topo-linha{
+  max-width:1080px; margin:0 auto; display:grid; grid-template-columns:1.7fr 1fr; gap:0;
+}
+.banner{
+  position:relative; height:clamp(84px,13vw,128px); background:var(--brand-deep);
+  background-size:cover; background-position:center; overflow:hidden;
+}
+.banner-vazio{
+  display:flex; align-items:center; justify-content:center; height:100%;
+  color:rgba(246,239,223,.7); font-family:var(--mono); font-size:11px;
+  letter-spacing:.12em; text-transform:uppercase; text-align:center; padding:0 1rem;
+  background-image:repeating-linear-gradient(135deg, rgba(246,239,223,.04) 0 11px, transparent 11px 22px);
+}
+.banner-troca{
+  position:absolute; right:10px; bottom:10px; font-family:var(--mono); font-size:10px;
+  letter-spacing:.06em; text-transform:uppercase; background:rgba(246,239,223,.92);
+  color:var(--brand-deep); padding:5px 9px; border-radius:99px; box-shadow:var(--shadow); transition:.2s;
+}
+.banner-troca:hover{background:var(--card)}
+.frase-topo{
+  display:flex; flex-direction:column; justify-content:center; gap:.2rem;
+  padding:.7rem clamp(1rem,3vw,1.6rem); background:var(--card-2); border-left:1px solid var(--rule);
+}
+.frase-topo .aspas{font-family:var(--serif); font-size:1.7rem; color:var(--ink-3); line-height:.5; opacity:.6}
+.frase-topo blockquote{
+  font-family:var(--serif); font-style:italic; font-weight:500; font-size:clamp(1rem,2.4vw,1.35rem);
+  color:var(--ink-strong); line-height:1.28;
+}
+.frase-topo cite{
+  font-family:var(--mono); font-style:normal; font-size:10.5px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--ink-2); margin-top:.3rem;
+}
+.identidade{
+  max-width:1080px; margin:0 auto; padding:0 clamp(1rem,4vw,2rem) 1rem;
+  display:flex; align-items:flex-end; gap:1rem; flex-wrap:wrap;
+}
+.foto-wrap{position:relative; margin-top:-34px; flex-shrink:0}
+.foto{
+  width:82px; height:82px; border-radius:50%; object-fit:cover; display:block;
+  border:3px solid var(--card); background:var(--card-2); box-shadow:var(--shadow-lg);
+}
+.foto-vazia{display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:26px; color:var(--ink-3); background:var(--card-2)}
+.foto-troca{
+  position:absolute; right:-2px; bottom:2px; width:26px; height:26px; border-radius:50%;
+  background:var(--brand); color:var(--card); display:flex; align-items:center; justify-content:center;
+  border:2px solid var(--card); font-size:12px; box-shadow:var(--shadow); transition:.2s;
+}
+.foto-troca:hover{background:var(--brand-deep)}
+.nomes{flex:1 1 240px; padding-bottom:2px; min-width:0}
+.campo-nome{
+  font-family:var(--serif); font-weight:600; font-size:clamp(1.35rem,3.4vw,1.9rem);
+  letter-spacing:-.01em; line-height:1.15; color:var(--ink-strong); width:100%;
+  border:none; background:transparent; border-bottom:1px dashed transparent; padding:1px 0;
+}
+.campo-nome:hover{border-bottom-color:var(--rule)}
+.campo-nome:focus{outline:none; border-bottom-color:var(--brand)}
+.campo-nome::placeholder{color:var(--ink-3); font-style:italic; font-weight:400}
+.cargo{
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink-2); margin-top:5px; display:flex; align-items:center; gap:7px; flex-wrap:wrap;
+}
+.cargo .selo{display:inline-block; width:6px; height:6px; background:var(--brand); transform:rotate(45deg); flex-shrink:0}
+.data-hoje{font-family:var(--mono); font-size:10.5px; color:var(--ink-3); letter-spacing:.04em; margin-top:3px}
+
+/* ── NAV ── */
+.nav{position:sticky; top:0; z-index:40; background:rgba(237,227,208,.9); backdrop-filter:blur(9px); border-bottom:1px solid var(--rule)}
+.nav-in{max-width:1080px; margin:0 auto; padding:0 clamp(.6rem,3vw,2rem); display:flex; gap:1px; align-items:center; overflow-x:auto; scrollbar-width:none}
+.nav-in::-webkit-scrollbar{display:none}
+.nav-btn{
+  padding:13px 15px; font-family:var(--mono); font-size:11px; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--ink-2); border-bottom:2px solid transparent; transition:.2s; white-space:nowrap;
+}
+.nav-btn:hover{color:var(--ink-strong)}
+.nav-btn.on{color:var(--brand-deep); border-bottom-color:var(--brand); font-weight:600}
+.nav-btn.voltar{margin-left:auto; color:var(--ink-3)}
+.nav-sair{font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); padding:13px 12px}
+.nav-sair:hover{color:var(--ink-2)}
+
+/* ── LAYOUT ── */
+.wrap{max-width:1080px; margin:0 auto; padding:1.5rem clamp(1rem,4vw,2rem) 4rem}
+.vista{display:none}
+.vista.on{display:block; animation:sobe .4s cubic-bezier(.2,.7,.3,1)}
+@keyframes sobe{from{opacity:0; transform:translateY(5px)}to{opacity:1; transform:none}}
+
+.eyebrow{font-family:var(--mono); font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:var(--ink-3); display:flex; align-items:center; gap:10px; margin-bottom:.7rem}
+.eyebrow::after{content:''; flex:1; height:1px; background:var(--rule)}
+h2.titulo{font-family:var(--serif); font-weight:600; font-size:1.3rem; letter-spacing:-.005em; line-height:1.25; color:var(--ink-strong)}
+.legenda{font-size:13px; color:var(--ink-2); margin-top:3px}
+
+.painel{background:var(--card); border:1px solid var(--rule); border-radius:var(--r-lg); box-shadow:var(--shadow); padding:1.2rem 1.3rem}
+.grade-topo{display:grid; grid-template-columns:minmax(240px,1fr) 1.35fr; gap:1rem; align-items:stretch}
+@media(max-width:800px){.grade-topo{grid-template-columns:1fr}}
+
+/* ── TERMÔMETRO ── */
+.termo-card{display:flex; gap:1.1rem; align-items:center}
+.termo-info{min-width:0}
+.termo-num{font-family:var(--serif); font-size:3.2rem; font-weight:600; line-height:.95; letter-spacing:-.02em}
+.faixa-nome{display:inline-block; font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; padding:3px 9px; border-radius:99px; margin-top:9px; font-weight:600}
+.termo-linhas{margin-top:.85rem; display:flex; flex-direction:column; gap:4px}
+.termo-linhas div{font-family:var(--mono); font-size:11px; color:var(--ink-2); display:flex; justify-content:space-between; gap:1rem}
+
+/* ── ALVOS ── */
+.alvo{display:flex; flex-direction:column; gap:.5rem}
+.alvo-item{display:grid; grid-template-columns:24px 1fr auto; gap:.7rem; align-items:center; padding:.6rem .7rem; border:1px solid var(--rule-soft); border-radius:var(--r); background:var(--card-2); text-align:left; width:100%; transition:.2s}
+.alvo-item:hover{border-color:var(--rule); transform:translateX(2px); background:#FBF6EA}
+.alvo-rank{font-family:var(--serif); font-size:16px; font-weight:600; color:var(--ink-3); text-align:center}
+.alvo-txt{min-width:0}
+.alvo-assunto{font-size:13.5px; font-weight:600; color:var(--ink-strong); line-height:1.3; display:block}
+.alvo-mat{font-family:var(--mono); font-size:10px; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-3); margin-top:2px; display:flex; align-items:center; gap:5px}
+.ponto{width:8px; height:8px; border-radius:2px; flex-shrink:0}
+.alvo-score{font-family:var(--serif); font-size:15px; font-weight:600; text-align:right}
+
+/* ── CÍRCULOS ── */
+.circulos{display:grid; grid-template-columns:repeat(auto-fill,minmax(104px,1fr)); gap:.5rem; margin-top:.9rem}
+.circ{display:flex; flex-direction:column; align-items:center; gap:.45rem; padding:.7rem .4rem; border:1px solid transparent; border-radius:var(--r); transition:.2s; text-align:center}
+.circ:hover{background:var(--card); border-color:var(--rule); box-shadow:var(--shadow); transform:translateY(-2px)}
+.circ-nome{font-size:11px; line-height:1.25; color:var(--ink-2); font-weight:500}
+.circ svg{display:block}
+
+/* ── RANK MATÉRIAS ── */
+.rank-lista{display:flex; flex-direction:column}
+.rank-linha{display:grid; grid-template-columns:auto 1fr auto; gap:.8rem; align-items:center; padding:.55rem .3rem; border-bottom:1px dotted var(--rule); text-align:left; width:100%; transition:.2s}
+.rank-linha:last-child{border-bottom:none}
+.rank-linha:hover{background:var(--card-2)}
+.rank-nome{display:flex; align-items:center; gap:.55rem; font-size:13.5px; font-weight:500; min-width:0}
+.rank-nome span{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.rank-barra{height:7px; background:var(--rule-soft); border-radius:99px; overflow:hidden; min-width:40px}
+.rank-barra i{display:block; height:100%; border-radius:99px; transition:width .7s cubic-bezier(.2,.7,.3,1)}
+.rank-meta{font-family:var(--mono); font-size:11px; color:var(--ink-2); display:flex; gap:.7rem; align-items:center; white-space:nowrap}
+.tag{font-family:var(--mono); font-size:9px; letter-spacing:.08em; text-transform:uppercase; padding:2px 7px; border-radius:99px; font-weight:600; border:1px solid}
+.tag.alta{color:var(--red); border-color:#DBBCAD; background:var(--red-soft)}
+.tag.media{color:#9A7A32; border-color:#DECB9A; background:var(--amber-soft)}
+.tag.baixa{color:var(--green); border-color:#C0CBA6; background:var(--green-soft)}
+
+/* ── CARTÕES MATÉRIA ── */
+.mat-grade{display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:.8rem}
+.mat-card{position:relative; background:var(--card); border:1px solid var(--rule); border-radius:var(--r-lg); padding:1rem 1rem .95rem 1.1rem; text-align:left; box-shadow:var(--shadow); transition:.2s; overflow:hidden}
+.mat-card::before{content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--mat)}
+.mat-card:hover{transform:translateY(-2px); box-shadow:var(--shadow-lg); border-color:var(--mat)}
+.mat-card-topo{display:flex; justify-content:space-between; align-items:flex-start; gap:.8rem}
+.mat-card h3{font-family:var(--serif); font-size:1.02rem; font-weight:600; line-height:1.25; color:var(--mat)}
+.mat-card-meta{font-family:var(--mono); font-size:10px; color:var(--ink-3); letter-spacing:.03em; margin-top:.5rem; display:flex; gap:.9rem; flex-wrap:wrap; align-items:center}
+.mat-card-barra{height:6px; background:var(--rule-soft); border-radius:99px; margin-top:.7rem; overflow:hidden}
+.mat-card-barra i{display:block; height:100%; border-radius:99px}
+
+/* ── DETALHE MATÉRIA ── */
+.mat-hero{border-radius:var(--r-lg); padding:1.3rem 1.4rem; margin-bottom:1.1rem; color:var(--card); background:var(--mat); box-shadow:var(--shadow-lg); position:relative; overflow:hidden}
+.mat-hero::after{content:''; position:absolute; inset:0; opacity:.1; pointer-events:none; background-image:repeating-linear-gradient(to bottom, transparent 0 16px, rgba(255,255,255,.6) 16px 17px)}
+.mat-hero-in{position:relative; display:flex; gap:1.3rem; align-items:center; flex-wrap:wrap}
+.mat-hero h2{font-family:var(--serif); font-size:clamp(1.35rem,3.4vw,1.9rem); font-weight:600; line-height:1.15; color:var(--card)}
+.mat-hero .sub{font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; opacity:.85; margin-top:6px}
+.mat-hero-stats{display:flex; gap:1.4rem; margin-top:.9rem; flex-wrap:wrap}
+.mat-hero-stats div{font-family:var(--mono); font-size:10.5px; letter-spacing:.05em; opacity:.9}
+.mat-hero-stats b{display:block; font-family:var(--serif); font-size:1.4rem; font-weight:600; color:var(--card); opacity:1; letter-spacing:0}
+.cor-troca{position:absolute; right:12px; top:12px; width:24px; height:24px; border-radius:50%; border:2px solid rgba(255,255,255,.55); overflow:hidden; padding:0; cursor:pointer}
+.cor-troca input{position:absolute; inset:-8px; width:200%; height:200%; border:none; padding:0; cursor:pointer}
+
+/* ── FILTROS ── */
+.filtros{display:flex; gap:.4rem; flex-wrap:wrap; margin:1rem 0 .8rem}
+.filtro{font-family:var(--mono); font-size:10px; letter-spacing:.07em; text-transform:uppercase; padding:6px 11px; border:1px solid var(--rule); border-radius:99px; color:var(--ink-2); background:var(--card); transition:.2s}
+.filtro:hover{border-color:var(--ink-3)}
+.filtro.on{background:var(--brand); color:var(--card); border-color:var(--brand); font-weight:600}
+
+/* ── ASSUNTOS ── */
+.assunto{background:var(--card); border:1px solid var(--rule); border-radius:var(--r); margin-bottom:.45rem; transition:.2s; overflow:hidden}
+.assunto.dominado{background:var(--card-2); border-color:var(--rule-soft)}
+.assunto-cab{display:grid; grid-template-columns:auto 1fr auto; gap:.8rem; align-items:center; padding:.7rem .9rem}
+.check{width:20px; height:20px; border:1.5px solid var(--rule); border-radius:5px; background:#FBF6EA; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:.2s; color:var(--card); font-size:12px}
+.check:hover{border-color:var(--mat)}
+.assunto.dominado .check{background:var(--green); border-color:var(--green)}
+.assunto-txt{min-width:0; cursor:pointer; text-align:left}
+.assunto-nome{font-size:14px; line-height:1.35; font-weight:500; color:var(--ink-strong)}
+.assunto.dominado .assunto-nome{color:var(--ink-2); text-decoration:line-through; text-decoration-color:var(--ink-3)}
+.assunto-sub{font-family:var(--mono); font-size:10px; color:var(--ink-3); margin-top:3px; display:flex; gap:.7rem; align-items:center; flex-wrap:wrap}
+.assunto-dir{display:flex; align-items:center; gap:.5rem}
+.mini-num{font-family:var(--serif); font-size:15px; font-weight:600; min-width:26px; text-align:right}
+.expandir{color:var(--ink-3); font-size:10px; font-family:var(--mono); padding:4px 6px; border-radius:5px; letter-spacing:.04em}
+.expandir:hover{background:var(--card-2); color:var(--ink)}
+.assunto-corpo{display:none; padding:0 .9rem .9rem 3rem; border-top:1px dotted var(--rule)}
+.assunto.aberto .assunto-corpo{display:block; padding-top:.8rem}
+.registro{display:flex; gap:.5rem; align-items:flex-end; flex-wrap:wrap; margin-bottom:.7rem}
+.campo{display:flex; flex-direction:column; gap:3px}
+.campo label{font-family:var(--mono); font-size:9px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3)}
+.campo input{width:76px; padding:7px 9px; border:1px solid var(--rule); border-radius:6px; background:#FBF6EA; font-family:var(--mono); font-size:13px}
+.campo input:focus{outline:none; border-color:var(--mat)}
+.btn{padding:8px 14px; border-radius:6px; font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; font-weight:600; border:1px solid var(--brand); background:var(--brand); color:var(--card); transition:.2s}
+.btn:hover{background:var(--brand-deep); border-color:var(--brand-deep)}
+.btn.vazado{background:transparent; color:var(--ink-2); border-color:var(--rule)}
+.btn.vazado:hover{border-color:var(--ink-3); color:var(--ink-strong); background:transparent}
+.nota{width:100%; min-height:62px; padding:9px 11px; border:1px solid var(--rule); border-radius:6px; background:#FBF6EA; font-size:13.5px; resize:vertical; line-height:1.5}
+.nota:focus{outline:none; border-color:var(--mat)}
+.nota-rotulo{font-family:var(--mono); font-size:9px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); margin-bottom:4px}
+
+/* ── DIAGNÓSTICO ── */
+.diag{margin-top:1.5rem}
+.diag-tabela{background:var(--card); border:1px solid var(--rule); border-radius:var(--r-lg); overflow:hidden}
+.diag-linha{display:grid; grid-template-columns:1fr 88px 40px; gap:.8rem; align-items:center; padding:.5rem .9rem; border-bottom:1px dotted var(--rule); font-size:13px}
+.diag-linha:last-child{border-bottom:none}
+.diag-linha:nth-child(odd){background:var(--card-2)}
+.diag-nome{min-width:0; line-height:1.3; color:var(--ink)}
+.diag-barra{height:6px; background:var(--rule-soft); border-radius:99px; overflow:hidden}
+.diag-barra i{display:block; height:100%}
+.diag-num{font-family:var(--serif); font-size:14px; font-weight:600; text-align:right}
+.diag-q{font-family:var(--mono); font-size:9.5px; color:var(--ink-3)}
+
+/* ── CALENDÁRIO ── */
+.cal-topo{display:flex; align-items:center; justify-content:space-between; gap:1rem; margin:1rem 0 .9rem}
+.cal-mes{font-family:var(--serif); font-size:1.25rem; font-weight:600; color:var(--ink-strong); text-transform:capitalize}
+.cal-nav{display:flex; gap:.4rem}
+.cal-seta{width:36px; height:36px; border:1px solid var(--rule); border-radius:50%; background:var(--card); display:flex; align-items:center; justify-content:center; color:var(--ink-2); font-size:16px; transition:.2s}
+.cal-seta:hover{border-color:var(--brand); color:var(--brand)}
+.cal-hoje-btn{font-family:var(--mono); font-size:10px; letter-spacing:.07em; text-transform:uppercase; padding:0 12px; border:1px solid var(--rule); border-radius:99px; color:var(--ink-2)}
+.cal-hoje-btn:hover{border-color:var(--brand); color:var(--brand)}
+.cal-grade{display:grid; grid-template-columns:repeat(7,1fr); gap:5px}
+.cal-dow{font-family:var(--mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3); text-align:center; padding:4px 0 6px; font-weight:600}
+.cal-dia{position:relative; aspect-ratio:1; border:1px solid var(--rule-soft); border-radius:var(--r); background:var(--card); padding:6px; display:flex; flex-direction:column; align-items:flex-start; gap:3px; transition:.2s; min-height:52px; cursor:pointer; overflow:hidden}
+.cal-dia:hover{border-color:var(--brand); background:#FBF6EA}
+.cal-dia.fora{opacity:.35; cursor:default}
+.cal-dia.fora:hover{border-color:var(--rule-soft); background:var(--card)}
+.cal-dia.hoje{border-color:var(--brand); box-shadow:inset 0 0 0 1px var(--brand)}
+.cal-dia.sel{background:var(--card-2); border-color:var(--brand); box-shadow:inset 0 0 0 1px var(--brand)}
+.cal-num{font-family:var(--serif); font-size:14px; font-weight:600; color:var(--ink)}
+.cal-dia.hoje .cal-num{color:var(--brand)}
+.cal-pontos{display:flex; gap:2px; flex-wrap:wrap; margin-top:auto}
+.cal-pt{width:6px; height:6px; border-radius:50%}
+.cal-cont{font-family:var(--mono); font-size:9px; color:var(--ink-3); position:absolute; right:5px; top:6px}
+.pt-plan{background:var(--brand)} .pt-feito{background:var(--green)} .pt-rev{background:var(--amber)} .pt-prox{background:#7C93A8}
+.cal-legenda{display:flex; gap:1rem; flex-wrap:wrap; margin-top:.8rem; font-family:var(--mono); font-size:10px; color:var(--ink-2); letter-spacing:.03em}
+.cal-legenda span{display:flex; align-items:center; gap:5px}
+
+.dia-painel{margin-top:1.2rem; background:var(--card); border:1px solid var(--rule); border-radius:var(--r-lg); box-shadow:var(--shadow); padding:1.2rem 1.3rem}
+.dia-cab{display:flex; align-items:baseline; justify-content:space-between; gap:1rem; flex-wrap:wrap; margin-bottom:1rem}
+.dia-titulo{font-family:var(--serif); font-size:1.15rem; font-weight:600; color:var(--ink-strong); text-transform:capitalize}
+.dia-forma{display:grid; gap:.6rem; margin-bottom:1.1rem}
+.tipo-linha{display:flex; gap:.35rem; flex-wrap:wrap}
+.tipo-btn{font-family:var(--mono); font-size:10px; letter-spacing:.05em; text-transform:uppercase; padding:7px 12px; border:1px solid var(--rule); border-radius:99px; color:var(--ink-2); transition:.2s; display:flex; align-items:center; gap:6px}
+.tipo-btn .pt{width:8px;height:8px;border-radius:50%}
+.tipo-btn.on{border-width:1.5px; font-weight:600; color:var(--ink-strong)}
+.tipo-btn.on.t-plan{border-color:var(--brand); background:var(--card-2)}
+.tipo-btn.on.t-feito{border-color:var(--green); background:var(--green-soft)}
+.tipo-btn.on.t-rev{border-color:var(--amber); background:var(--amber-soft)}
+.tipo-btn.on.t-prox{border-color:#7C93A8; background:#E4EAEF}
+.dia-inputs{display:flex; gap:.5rem; flex-wrap:wrap}
+.dia-inputs select,.dia-inputs input{padding:9px 11px; border:1px solid var(--rule); border-radius:6px; background:#FBF6EA; font-size:13.5px}
+.dia-inputs select{min-width:150px} .dia-inputs input{flex:1; min-width:180px}
+.dia-inputs select:focus,.dia-inputs input:focus{outline:none; border-color:var(--brand)}
+.reg-lista{display:flex; flex-direction:column; gap:.5rem}
+.reg-item{display:grid; grid-template-columns:auto 1fr auto; gap:.7rem; align-items:center; padding:.6rem .8rem; border:1px solid var(--rule-soft); border-radius:var(--r); background:var(--card-2)}
+.reg-barra{width:4px; align-self:stretch; border-radius:99px; min-height:28px}
+.reg-txt{min-width:0}
+.reg-tipo{font-family:var(--mono); font-size:9px; letter-spacing:.06em; text-transform:uppercase; font-weight:600}
+.reg-conteudo{font-size:13.5px; color:var(--ink-strong); line-height:1.35; margin-top:1px}
+.reg-mat{font-family:var(--mono); font-size:10px; color:var(--ink-3); margin-top:2px}
+.reg-x{color:var(--ink-3); font-size:16px; padding:2px 6px; border-radius:5px; line-height:1}
+.reg-x:hover{color:var(--red); background:var(--red-soft)}
+.cal-resumo{display:flex; gap:.8rem; flex-wrap:wrap; margin-top:1rem}
+.cal-stat{flex:1 1 120px; background:var(--card); border:1px solid var(--rule); border-radius:var(--r); padding:.8rem 1rem; text-align:center}
+.cal-stat b{display:block; font-family:var(--serif); font-size:1.7rem; font-weight:600; color:var(--ink-strong); line-height:1}
+.cal-stat span{font-family:var(--mono); font-size:9.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3); margin-top:4px; display:block}
+
+/* ── AJUSTES ── */
+.linha-ajuste{display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:.85rem 0; border-bottom:1px dotted var(--rule); flex-wrap:wrap}
+.linha-ajuste:last-child{border-bottom:none}
+.linha-ajuste p{font-size:13px; color:var(--ink-2); margin-top:2px; max-width:52ch}
+.linha-ajuste h4{font-family:var(--serif); font-size:1rem; font-weight:600; color:var(--ink-strong)}
+.toast{position:fixed; left:50%; bottom:24px; transform:translate(-50%,80px); z-index:90; background:var(--brand-deep); color:var(--card); padding:11px 20px; border-radius:99px; font-size:13.5px; box-shadow:var(--shadow-lg); opacity:0; transition:.35s cubic-bezier(.2,.7,.3,1); pointer-events:none; max-width:90vw; text-align:center}
+.toast.on{transform:translate(-50%,0); opacity:1}
+.vazio{text-align:center; padding:2.3rem 1rem; color:var(--ink-3); font-size:14px}
+.vazio b{display:block; font-family:var(--serif); font-size:1.05rem; color:var(--ink-2); margin-bottom:4px}
+.secao{margin-top:1.6rem}
+.rodape{margin-top:2.4rem; padding-top:1.1rem; border-top:1px solid var(--rule); font-family:var(--mono); font-size:10px; letter-spacing:.04em; color:var(--ink-3); display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap}
+
+@media(max-width:680px){
+  .topo-linha{grid-template-columns:1fr}
+  .frase-topo{border-left:none; border-top:1px solid var(--rule); padding:.9rem clamp(1rem,4vw,1.4rem)}
+  .banner{height:clamp(76px,20vw,108px)}
+}
+@media(max-width:560px){
+  body{font-size:14.5px}
+  .termo-num{font-size:2.5rem}
+  .assunto-corpo{padding-left:1rem}
+  .diag-linha{grid-template-columns:1fr 54px 34px}
+  .circulos{grid-template-columns:repeat(auto-fill,minmax(88px,1fr))}
+  .cal-dia{padding:4px; min-height:44px}
+  .cal-num{font-size:12px}
+  .cal-dow{font-size:9px}
+  .dia-inputs input,.dia-inputs select{min-width:0; width:100%}
+  .dia-inputs{flex-direction:column}
+  .wrap{padding-top:1.1rem}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms !important; transition-duration:.01ms !important}}
+</style>
+</head>
+<body>
+<!-- ══ LOGIN ══ -->
+<div class="login" id="login">
+  <div class="login-card">
+    <div class="login-selo">g</div>
+    <h1>Painel de Estudos</h1>
+    <div class="frase">“Eu sou mais forte do que eu.”</div>
+    <div class="login-carregando" id="loginCarregando" style="margin-top:1.4rem; font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3)">Verificando sessão…</div>
+    <div class="login-campos" id="loginCampos" style="display:none">
+      <input type="text" id="loginUser" placeholder="usuário" autocomplete="username" autocapitalize="none" spellcheck="false">
+      <input type="password" id="loginPass" placeholder="senha" autocomplete="current-password">
+      <button class="login-btn" id="loginBtn">Entrar</button>
+    </div>
+    <div class="login-erro" id="loginErro"></div>
+  </div>
+</div>
+
+<div id="app" class="app-oculto">
+
+
+<header class="topo">
+  <div class="topo-linha">
+    <div class="banner" id="banner">
+      <div class="banner-vazio" id="bannerVazio">Cabeçalho — clique para trocar</div>
+      <button class="banner-troca" id="btnBanner">Trocar</button>
+    </div>
+    <div class="frase-topo">
+      <span class="aspas">“</span>
+      <blockquote>Eu sou mais forte do que eu.</blockquote>
+      <cite>Clarice Lispector</cite>
+    </div>
+  </div>
+  <div class="identidade">
+    <div class="foto-wrap">
+      <div class="foto foto-vazia" id="foto">AC</div>
+      <button class="foto-troca" id="btnFoto" title="Trocar foto" aria-label="Trocar foto">✎</button>
+    </div>
+    <div class="nomes">
+      <input class="campo-nome" id="campoNome" placeholder="Escreva o seu nome aqui" autocomplete="off" spellcheck="false">
+      <div class="cargo"><i class="selo"></i> Auditor de Controle Externo · Tribunal de Contas de Pernambuco</div>
+      <div class="data-hoje" id="dataHoje"></div>
+    </div>
+  </div>
+</header>
+
+<nav class="nav">
+  <div class="nav-in">
+    <button class="nav-btn on" data-vista="inicio">Início</button>
+    <button class="nav-btn" data-vista="materias">Matérias</button>
+    <button class="nav-btn" data-vista="calendario">Calendário</button>
+    <button class="nav-btn" data-vista="ajustes">Ajustes</button>
+    <button class="nav-btn voltar" id="btnVoltar" style="display:none">← Voltar</button>
+    <button class="nav-sair" id="btnSair">Sair</button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- ══ INÍCIO ══ -->
+  <section class="vista on" id="vista-inicio">
+    <div class="grade-topo">
+      <div class="painel">
+        <div class="eyebrow">Progresso geral</div>
+        <div class="termo-card">
+          <div id="termoGeral"></div>
+          <div class="termo-info">
+            <div class="termo-num" id="numGeral">—</div>
+            <div class="faixa-nome" id="faixaGeral">—</div>
+            <div class="termo-linhas" id="linhasGeral"></div>
+          </div>
+        </div>
+      </div>
+      <div class="painel">
+        <div class="eyebrow">Onde atacar primeiro</div>
+        <h2 class="titulo">Assuntos mais prioritários</h2>
+        <div class="legenda">Questões cobradas na prova cruzadas com a sua taxa de erro — quanto mais você erra no que mais cai, mais alto ele sobe.</div>
+        <div class="alvo" id="alvoLista" style="margin-top:.9rem"></div>
+      </div>
+    </div>
+
+    <div class="secao">
+      <div class="eyebrow">Progresso por matéria</div>
+      <h2 class="titulo">Cada disciplina de um olhar</h2>
+      <div class="legenda">Vermelho até 69 · amarelo de 70 a 79 · verde de 80 em diante. Clique para abrir a matéria.</div>
+      <div class="circulos" id="circulos"></div>
+    </div>
+
+    <div class="secao">
+      <div class="eyebrow">Prioridade entre matérias</div>
+      <h2 class="titulo">Ordem de ataque</h2>
+      <div class="legenda">Peso na prova × erro². Direito Financeiro, com 14 questões, puxa a fila; o que você mais erra sobe junto.</div>
+      <div class="painel" style="margin-top:.9rem; padding:.7rem 1rem">
+        <div class="rank-lista" id="rankMaterias"></div>
+      </div>
+    </div>
+
+    <div class="rodape">
+      <span id="rodapeQ"></span>
+      <span>Base: seu desempenho no TEC + edital verticalizado + questões da prova</span>
+    </div>
+  </section>
+
+  <!-- ══ MATÉRIAS ══ -->
+  <section class="vista" id="vista-materias">
+    <div class="eyebrow">As 16 matérias do edital</div>
+    <h2 class="titulo">Escolha por onde continuar</h2>
+    <div class="legenda">Cada matéria tem cor própria — clique no cartão para abrir os assuntos e registrar o seu desempenho.</div>
+    <div class="filtros" id="filtrosMat">
+      <button class="filtro on" data-ord="prioridade">Ordenar por prioridade</button>
+      <button class="filtro" data-ord="pior">Pior desempenho</button>
+      <button class="filtro" data-ord="alfabetica">A–Z</button>
+    </div>
+    <div class="mat-grade" id="matGrade"></div>
+  </section>
+
+  <!-- ══ CALENDÁRIO ══ -->
+  <section class="vista" id="vista-calendario">
+    <div class="eyebrow">Planejamento de estudos</div>
+    <h2 class="titulo">Calendário</h2>
+    <div class="legenda">Registre o que pretende estudar, o que de fato estudou, o que precisa revisar e o próximo tópico. Clique num dia para abrir.</div>
+
+    <div class="cal-topo">
+      <div class="cal-mes" id="calMes">—</div>
+      <div class="cal-nav">
+        <button class="cal-hoje-btn" id="calHoje">Hoje</button>
+        <button class="cal-seta" id="calAnt" aria-label="Mês anterior">‹</button>
+        <button class="cal-seta" id="calProx" aria-label="Próximo mês">›</button>
+      </div>
+    </div>
+    <div class="cal-grade" id="calGrade"></div>
+    <div class="cal-legenda">
+      <span><i class="cal-pt pt-plan"></i> Planejei</span>
+      <span><i class="cal-pt pt-feito"></i> Estudei</span>
+      <span><i class="cal-pt pt-rev"></i> Revisar</span>
+      <span><i class="cal-pt pt-prox"></i> Próximo tópico</span>
+    </div>
+    <div class="cal-resumo" id="calResumo"></div>
+
+    <div class="dia-painel" id="diaPainel"></div>
+  </section>
+
+  <!-- ══ DETALHE DA MATÉRIA ══ -->
+  <section class="vista" id="vista-materia">
+    <div class="mat-hero" id="matHero"></div>
+    <div class="eyebrow">Assuntos do edital verticalizado</div>
+    <h2 class="titulo" id="matTituloAssuntos">Assuntos</h2>
+    <div class="legenda">Marque o que já domina, registre questões resolvidas e anote os pontos que ainda travam.</div>
+    <div class="filtros" id="filtrosAssunto">
+      <button class="filtro on" data-f="prioridade">Por prioridade</button>
+      <button class="filtro" data-f="pendentes">Só pendentes</button>
+      <button class="filtro" data-f="dominados">Só dominados</button>
+      <button class="filtro" data-f="edital">Ordem do edital</button>
+    </div>
+    <div id="listaAssuntos"></div>
+
+    <div class="diag secao">
+      <div class="eyebrow">Diagnóstico do TEC Concursos</div>
+      <h2 class="titulo">Seus pontos fracos nesta matéria</h2>
+      <div class="legenda">Tópicos ordenados por prioridade: volume de questões cruzado com a sua taxa de erro.</div>
+      <div class="diag-tabela" id="diagTabela" style="margin-top:.9rem"></div>
+      <div style="margin-top:.7rem; text-align:center">
+        <button class="btn vazado" id="btnMaisDiag">Ver todos os tópicos</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ AJUSTES ══ -->
+  <section class="vista" id="vista-ajustes">
+    <div class="eyebrow">Ajustes</div>
+    <h2 class="titulo">Seus dados</h2>
+    <div class="legenda">Tudo fica salvo apenas neste navegador. Exporte de tempos em tempos para não perder nada.</div>
+
+    <div class="painel" style="margin-top:1rem">
+      <div class="linha-ajuste">
+        <div><h4>Exportar backup</h4><p>Baixa um arquivo com nome, foto, cabeçalho, cores, assuntos dominados, anotações, questões e calendário.</p></div>
+        <button class="btn" id="btnExportar">Baixar backup</button>
+      </div>
+      <div class="linha-ajuste">
+        <div><h4>Restaurar backup</h4><p>Carrega um arquivo exportado antes e substitui o que estiver salvo agora.</p></div>
+        <button class="btn vazado" id="btnImportar">Escolher arquivo</button>
+      </div>
+      <div class="linha-ajuste">
+        <div><h4>Exportar planilha (CSV)</h4><p>Gera a lista de matéria, prioridade, assunto, situação e anotações — para abrir no Excel.</p></div>
+        <button class="btn vazado" id="btnCsv">Baixar CSV</button>
+      </div>
+      <div class="linha-ajuste">
+        <div><h4>Limpar registros de questões</h4><p>Apaga só as questões que você registrou aqui. O desempenho importado do TEC continua como base.</p></div>
+        <button class="btn vazado" id="btnLimparQ">Limpar questões</button>
+      </div>
+      <div class="linha-ajuste">
+        <div><h4>Recomeçar do zero</h4><p>Apaga assuntos dominados, anotações, questões, calendário, cores e imagens deste navegador.</p></div>
+        <button class="btn vazado" id="btnZerar">Apagar tudo</button>
+      </div>
+    </div>
+
+    <div class="secao">
+      <div class="eyebrow">Como a prioridade é calculada</div>
+      <div class="painel">
+        <p style="font-size:13.5px; color:var(--ink-2); line-height:1.65">
+          <b>Prioridade = questões na prova × erro².</b> O peso de cada matéria vem da quantidade de questões que caíram na prova
+          (de 2 a 14). A taxa de erro é a sua, elevada ao quadrado, de modo que errar muito no que mais cai
+          empurra a matéria para o topo com força. Assuntos ainda não resolvidos herdam a taxa de erro da matéria,
+          e amostras pequenas são suavizadas para não distorcer a fila. Marcar um assunto como dominado o retira do foco.
+        </p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="rodape" style="max-width:1080px;margin:0 auto;padding:0 clamp(1rem,4vw,2rem) 2rem;border:none">
+  <span>Gota · painel pessoal de estudos</span>
+</div>
+</div><!-- /app -->
+
+<div class="toast" id="toast"></div>
+<input type="file" id="inputImg" accept="image/*" style="display:none">
+<input type="file" id="inputJson" accept="application/json,.json" style="display:none">
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence }
+  from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc }
+  from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+(async function(){
+"use strict";
+
+const DADOS = [{"id":"controle-externo","n":"Controle Externo","c":"#B03A2E","q":235,"ac":186,"er":49,"as":[{"a":"Conceito, espécies, controle interno x externo","p":"Alta","tq":98,"tac":82,"tn":"Controle Interno Governamental"},{"a":"Sistemas de controle","p":"Alta","tq":26,"tac":18,"tn":"Controle - Conceitos, Tipos e Sistemas"},{"a":"Regras constitucionais de fiscalização contábil, financeira, orçamentária, operacional e patrimonial","p":"Alta"},{"a":"Princípio da simetria concêntrica","p":"Alta"},{"a":"Natureza jurídica e eficácia das decisões dos TCs","p":"Alta","tq":15,"tac":13,"tn":"Natureza Jurídica e Tipos de Funções dos Tribunais de Contas"},{"a":"Competências constitucionais dos TCs: parecer prévio, julgamento de contas, atos de pessoal, poder geral de cautela, representação, denúncias, auditorias","p":"Alta"},{"a":"Controle de constitucionalidade exercido pelos TCs","p":"Alta","tq":11,"tac":10,"tn":"Tribunais de Contas e o Controle de Constitucionalidade das Leis"},{"a":"Jurisprudência do STF sobre o tema","p":"Alta"},{"a":"Devido processo legal nos TCs","p":"Alta"},{"a":"Aplicação da LINDB ao processo de controle externo","p":"Alta"},{"a":"Constituição de PE e TCE/PE: natureza, competência, estrutura, jurisdição","p":"Alta"},{"a":"Lei Orgânica do TCE/PE (Lei nº 12.600/2004): organização, composição, funcionamento","p":"Alta","tq":5,"tac":3,"tn":"Composição e Organização (TCEs e TCMs)"},{"a":"Ministério Público de Contas","p":"Alta","tq":1,"tac":1,"tn":"Ministério Público de Contas"},{"a":"Regimento Interno do TCE/PE","p":"Alta"}],"dg":[{"n":"Controle Interno Governamental","q":98,"ac":82},{"n":"Controle (Aspectos Gerais)","q":46,"ac":33},{"n":"Normas Internacionais sobre Controle Interno (COSO, Intosai)","q":45,"ac":36},{"n":"Tribunais de Contas Estaduais e Municipais (LO e RI)","q":43,"ac":32},{"n":"Controle Interno na Constituição Federal","q":42,"ac":39},{"n":"Posição do STF quanto aos Tribunais de Contas","q":30,"ac":23},{"n":"Controle - Conceitos, Tipos e Sistemas","q":26,"ac":18},{"n":"Natureza Jurídica e Tipos de Funções dos Tribunais de Contas","q":15,"ac":13},{"n":"Processos de Contas (TCEs e TCMs)","q":15,"ac":10},{"n":"Auditoria e Fiscalização (TCEs e TCMs)","q":13,"ac":11},{"n":"Tribunais de Contas e o Controle de Constitucionalidade das Leis","q":11,"ac":10},{"n":"Competência e Atribuições (TCEs e TCMs)","q":9,"ac":8},{"n":"Outras Normas e Decisões (TCEs e TCMs)","q":6,"ac":5},{"n":"Abrangência do Controle (art. 70 da CF)","q":5,"ac":2},{"n":"Controle Interno Municipal","q":5,"ac":3},{"n":"Normas e Decisões do TCU","q":5,"ac":4},{"n":"Composição e Organização (TCEs e TCMs)","q":5,"ac":3},{"n":"Controle Interno Federal","q":3,"ac":1},{"n":"Demais Normas do TCU","q":3,"ac":2},{"n":"Outros Normativos da CGU","q":2,"ac":1},{"n":"Outros Tópicos e Questões Mescladas sobre Controle Interno Governamental","q":2,"ac":2},{"n":"IN TCU nº 84/2020 - Normas para a Tomada e Prestação de Contas dos Administradores e Responsáveis da Administração Pública Federal","q":2,"ac":2},{"n":"Decreto nº 3.591/2000 - Sistema de Controle Interno do Poder Executivo Federal","q":1,"ac":0},{"n":"Controle Interno Estadual","q":1,"ac":1},{"n":"Legislação de Controle Interno do Estado de SC","q":1,"ac":1},{"n":"Outros Normativos sobre Controle Interno do Estado de SC","q":1,"ac":1},{"n":"TCU (CF, LO e RI)","q":1,"ac":1},{"n":"Competência do TCU","q":1,"ac":1},{"n":"Recursos (TCEs e TCMs)","q":1,"ac":0},{"n":"Ministério Público de Contas","q":1,"ac":1}],"pv":2,"qp":2},{"id":"direito-financeiro","n":"Direito Financeiro","c":"#46855F","q":829,"ac":593,"er":236,"as":[{"a":"Finanças Públicas na CF/88 (arts. 165-169)","p":"Alta"},{"a":"Lei nº 4.320/1964","p":"Alta","tq":98,"tac":60,"tn":"LOA - Lei Orçamentária Anual (CF/1988 e Lei nº 4.320/1964)"},{"a":"Orçamento público: princípios, técnicas, ciclo orçamentário (elaboração a execução)","p":"Alta","tq":53,"tac":34,"tn":"Ciclo Orçamentário"},{"a":"PPA, LDO, LOA","p":"Alta","tq":172,"tac":119,"tn":"Instrumentos Orçamentários na CF 88 (PPA, LDO e LOA)"},{"a":"Processo legislativo orçamentário e emendas parlamentares","p":"Alta"},{"a":"Créditos adicionais","p":"Alta","tq":35,"tac":23,"tn":"Créditos Adicionais"},{"a":"Vedações orçamentárias","p":"Alta","tq":19,"tac":12,"tn":"Vedações Constitucionais em Matéria Orçamentária (Art. 167 da CF/1988)"},{"a":"Execução orçamentária e financeira","p":"Alta","tq":37,"tac":33,"tn":"Introdução à Administração Financeira e Orçamentária"},{"a":"Receita pública: conceito, classificações, estágios, dívida ativa, repartição de receitas","p":"Alta","tq":25,"tac":17,"tn":"Estágios da Receita Pública"},{"a":"Despesa pública: conceito, classificações, estágios, restos a pagar","p":"Alta","tq":22,"tac":18,"tn":"Estágios da Despesa Pública"},{"a":"Crédito público e dívida pública","p":"Alta","tq":30,"tac":24,"tn":"Dívida Pública e Endividamento (arts. 29 a 42 da LRF)"},{"a":"Evolução do orçamento: tradicional, orçamento-programa, base zero, por resultados","p":"Alta","tq":60,"tac":42,"tn":"Técnicas/Espécies Orçamentárias (Orçamento Programa, Tradicional, Participativo, Base Zero, etc)"},{"a":"Créditos adicionais: espécies (suplementares, especiais, extraordinários), requisitos e limites","p":"Alta","tq":35,"tac":23,"tn":"Créditos Adicionais"},{"a":"DRU, DRE, DRM (desvinculação de receitas)","p":"Alta"},{"a":"Condições para renúncia de receita","p":"Alta"},{"a":"Despesas obrigatórias x discricionárias","p":"Alta"},{"a":"Precatórios e sua disciplina constitucional","p":"Alta"},{"a":"Crédito público, dívida pública","p":"Alta","tq":30,"tac":24,"tn":"Dívida Pública e Endividamento (arts. 29 a 42 da LRF)"},{"a":"Competências do Congresso e do Senado sobre endividamento","p":"Alta"},{"a":"LRF (LC nº 101/2000): princípios da gestão fiscal, planejamento, transferências voluntárias, dívida, transparência","p":"Alta","tq":5,"tac":4,"tn":"Transparência da Gestão Fiscal (arts. 48 e 49 da LRF)"}],"dg":[{"n":"Orçamento Público","q":327,"ac":237},{"n":"Instrumentos Orçamentários na CF 88 (PPA, LDO e LOA)","q":172,"ac":119},{"n":"Receita Pública (AFO e CPU)","q":145,"ac":89},{"n":"Lei de Responsabilidade Fiscal - LRF (Lei Complementar nº 101/2000)","q":145,"ac":108},{"n":"LOA - Lei Orçamentária Anual (CF/1988 e Lei nº 4.320/1964)","q":98,"ac":60},{"n":"Despesa Pública (AFO e CPU)","q":71,"ac":58},{"n":"Classificações do Orçamento Público","q":68,"ac":49},{"n":"Técnicas/Espécies Orçamentárias (Orçamento Programa, Tradicional, Participativo, Base Zero, etc)","q":60,"ac":42},{"n":"Princípios Orçamentários","q":60,"ac":49},{"n":"Classificação por Natureza da Receita","q":60,"ac":37},{"n":"Ciclo Orçamentário","q":53,"ac":34},{"n":"Disposições Preliminares (arts. 1º e 2º da LRF)","q":42,"ac":31},{"n":"Planejamento e Orçamento Público (arts. 3º a 10 da LRF)","q":42,"ac":29},{"n":"Introdução à Administração Financeira e Orçamentária","q":37,"ac":33},{"n":"Créditos Adicionais","q":35,"ac":23},{"n":"Conceitos Gerais (Orçamentária e Extraorçamentária, Afetação Patrimonial, Regularidade, Coercitividade)","q":32,"ac":23},{"n":"Dívida Pública e Endividamento (arts. 29 a 42 da LRF)","q":30,"ac":24},{"n":"PPA - Plano Plurianual (CF/1988 e Lei nº 4.320/1964)","q":29,"ac":27},{"n":"LDO - Lei de Diretrizes Orçamentárias (CF/1988 e Lei nº 4.320/1964)","q":25,"ac":20},{"n":"Estágios da Receita Pública","q":25,"ac":17},{"n":"Dívida Ativa","q":23,"ac":9},{"n":"Funções de Governo","q":22,"ac":21},{"n":"Conceito e Natureza Jurídica do Orçamento Público","q":22,"ac":17},{"n":"Estágios da Despesa Pública","q":22,"ac":18},{"n":"Classificação da Despesa Orçamentária","q":20,"ac":17},{"n":"Vedações Constitucionais em Matéria Orçamentária (Art. 167 da CF/1988)","q":19,"ac":12},{"n":"Dívida Pública (AFO e CPU)","q":14,"ac":11},{"n":"Definições, Limites e Recondução da Dívida (arts. 29 a 31 da LRF)","q":14,"ac":10},{"n":"Da Receita Pública (arts. 11 a 14 da LRF)","q":13,"ac":8},{"n":"Normas Gerais de Direito Financeiro","q":11,"ac":8},{"n":"Restos a Pagar (RAP)","q":9,"ac":6},{"n":"Despesas de Exercícios Anteriores (DEA)","q":9,"ac":8},{"n":"Da Despesa Pública (arts. 15 a 24 da LRF)","q":8,"ac":8},{"n":"Operações de Crédito (arts. 32 a 39 da LRF)","q":8,"ac":7},{"n":"Garantia, Contragarantia e Restos a Pagar (arts. 40 a 42 da LRF)","q":8,"ac":7},{"n":"Transparência, Controle e Fiscalização (arts. 48 a 59 da LRF)","q":7,"ac":6},{"n":"Despesas com Pessoal e Seguridade Social (arts. 18 a 24 da LRF)","q":6,"ac":6},{"n":"Aspectos/Dimensões do Orçamento Público (Jurídico, Político, Social, etc)","q":5,"ac":5},{"n":"Histórico do Orçamento","q":5,"ac":3},{"n":"Dívida Fundada e Dívida Flutuante - Conceitos Gerais","q":5,"ac":5},{"n":"Suprimento de Fundos","q":5,"ac":3},{"n":"Regime de Adiantamento","q":5,"ac":3},{"n":"Transparência da Gestão Fiscal (arts. 48 e 49 da LRF)","q":5,"ac":4},{"n":"A Atividade Financeira do Estado","q":4,"ac":4},{"n":"Tipos de Orçamento Público (Executivo, Legislativo, Misto)","q":3,"ac":2},{"n":"Classificação por Fonte / Destinação de Recursos","q":3,"ac":2},{"n":"Classificação da Receita por Identificador de Resultado Primário","q":2,"ac":1},{"n":"Geração de Despesa e Despesa Obrigatória de Caráter Continuado (arts. 15 a 17 da LRF)","q":2,"ac":2},{"n":"Gestão Patrimonial (arts. 43 a 47 da LRF)","q":2,"ac":1},{"n":"Relatório de Gestão Fiscal - RGF (arts. 54 e 55 da LRF)","q":2,"ac":2},{"n":"Tópicos Mesclados e Demais Temas da Lei nº 4.320/1964","q":2,"ac":0},{"n":"Tópicos Mesclados de PPA, LDO e LOA","q":1,"ac":0},{"n":"Fundos Especiais","q":1,"ac":0},{"n":"Conceitos Gerais sobre Despesa Pública","q":1,"ac":1},{"n":"Das Transferências Voluntárias (art. 25 da LRF)","q":1,"ac":1}],"pv":14,"qp":14},{"id":"contabilidade-publica","n":"Contabilidade Pública","c":"#1E7A55","q":728,"ac":524,"er":204,"as":[{"a":"CASP: conceitos, princípios orçamentários e contábeis","p":"Alta"},{"a":"Princípios orçamentários e contábeis","p":"Alta"},{"a":"PCASP","p":"Alta","tq":37,"tac":27,"tn":"Plano de Contas (PCASP)"},{"a":"Estrutura conceitual da contabilidade pública","p":"Alta","tq":280,"tac":188,"tn":"Aspectos Patrimoniais da Contabilidade Pública"},{"a":"Regimes contábeis (caixa, competência, misto)","p":"Alta"},{"a":"Classificação de receita e despesa","p":"Alta"},{"a":"Restos a pagar, créditos adicionais, estágios da receita e despesa","p":"Alta"},{"a":"NBC TSP (normas do CFC)","p":"Alta"},{"a":"Patrimônio público: bens de uso comum, uso especial e dominicais","p":"Alta","tq":12,"tac":8,"tn":"Patrimônio Público"},{"a":"Demonstrações contábeis: Balanço Orçamentário, Financeiro, Patrimonial, DVP, DFC","p":"Alta","tq":18,"tac":13,"tn":"Balanço Financeiro"},{"a":"Consolidação das contas públicas","p":"Alta"},{"a":"Controle interno e externo da contabilidade pública","p":"Alta","tq":280,"tac":188,"tn":"Aspectos Patrimoniais da Contabilidade Pública"},{"a":"Compatibilização orçamentária/financeira/patrimonial","p":"Alta"},{"a":"Análise das demonstrações: horizontal, vertical, indicadores de estrutura de capital e liquidez","p":"Alta"},{"a":"Notas explicativas","p":"Alta"}],"dg":[{"n":"Aspectos Patrimoniais da Contabilidade Pública","q":280,"ac":188},{"n":"Introdução à Contabilidade Aplicada ao Setor Público","q":223,"ac":176},{"n":"Demonstrações Contábeis Aplicadas ao Setor Público","q":164,"ac":114},{"n":"Conceitos, Objeto, Objetivos e Campo de Aplicação (Estrutura Conceitual - Prefácio e caps. 1 a 4)","q":140,"ac":112},{"n":"Balanço Orçamentário (MCASP e NBC TSP 13)","q":54,"ac":35},{"n":"Provisões, Passivos e Ativos Contingentes (MCASP e NBC TSP 03)","q":45,"ac":20},{"n":"Ativo Imobilizado (MCASP e NBC TSP 07)","q":43,"ac":33},{"n":"Introdução às DCASP (Parte V, Capítulo 1 do MCASP e NBC TSP 11)","q":43,"ac":26},{"n":"Princípios da Contabilidade Pública","q":42,"ac":31},{"n":"Regimes Orçamentário e Patrimonial e Exercício Financeiro","q":41,"ac":33},{"n":"Plano de Contas (PCASP)","q":37,"ac":27},{"n":"Receita de Transação sem Contraprestação (MCASP e NBC TSP 01)","q":35,"ac":24},{"n":"Ativo Intangível (MCASP e NBC TSP 08)","q":34,"ac":20},{"n":"Depreciação, Amortização e Exaustão (NBC TSP 07, MCASP, etc.)","q":25,"ac":22},{"n":"Escrituração Contábil Pública","q":24,"ac":19},{"n":"Demonstração de Fluxo de Caixa (MCASP e NBC TSP 12)","q":21,"ac":16},{"n":"Variações Patrimoniais","q":20,"ac":16},{"n":"Balanço Financeiro","q":18,"ac":13},{"n":"Bases de Mensuração de Ativos e Passivos (MCASP e NBC TSP EC)","q":17,"ac":11},{"n":"Estoques (MCASP e NBC TSP 04)","q":16,"ac":12},{"n":"Balanço Patrimonial (AFO e CPU)","q":15,"ac":14},{"n":"Patrimônio Público","q":12,"ac":8},{"n":"Avaliação de Elementos Patrimoniais Conforme o art. 106 da Lei nº 4.320/1964","q":10,"ac":7},{"n":"Demonstração das Variações Patrimoniais (DVP)","q":9,"ac":7},{"n":"Receita de Transação com Contraprestação (MCASP e NBC TSP 02)","q":8,"ac":6},{"n":"Redução ao Valor Recuperável (MCASP, NBC TSP 09 e 10)","q":5,"ac":5},{"n":"Inventário. Material Permanente e de Consumo.","q":3,"ac":1},{"n":"Disponibilidades (MCASP e NBC TSP 12)","q":3,"ac":2},{"n":"Tópicos Mesclados de Demonstrações Contábeis (MCASP, NBC TSP e Lei nº 4.320/1964)","q":3,"ac":2},{"n":"Bens Públicos","q":2,"ac":1},{"n":"Propriedade para Investimento (MCASP e NBC TSP 06)","q":2,"ac":0},{"n":"Consolidação das Demonstrações Contábeis","q":1,"ac":1}],"pv":8,"qp":8},{"id":"auditoria-governamental","n":"Auditoria Governamental","c":"#9E3556","q":810,"ac":517,"er":293,"as":[{"a":"Conceitos, objetivos, tipos de auditoria (financeira, operacional, conformidade)","p":"Alta","tq":38,"tac":21,"tn":"Auditoria Operacional"},{"a":"Interna x externa","p":"Alta","tq":18,"tac":9,"tn":"Aspectos Gerais da Auditoria Interna"},{"a":"NBASP do IRB: NBASP 100, 130, 200, 300, 400, 9020 e NBASP 12 (valor e benefício dos TCs)","p":"Alta"},{"a":"Etapas: planejamento, execução (procedimentos e evidências), relatório, comunicação de achados, monitoramento","p":"Alta"},{"a":"Técnicas: inspeção documental/física, reexecução, recálculo, observação, entrevista, circularização, revisão analítica, cruzamento eletrônico","p":"Alta"},{"a":"Métodos de amostragem: por atributos e por unidade monetária","p":"Alta"},{"a":"Achado de auditoria","p":"Alta"},{"a":"Análise de causa e efeito","p":"Alta"},{"a":"Responsabilização de agentes públicos e privados","p":"Alta"},{"a":"Auditoria operacional: economicidade, eficiência, eficácia, efetividade","p":"Alta","tq":38,"tac":21,"tn":"Auditoria Operacional"},{"a":"Avaliação de políticas públicas","p":"Alta"},{"a":"NBASP 140 (controle de qualidade)","p":"Alta","tq":6,"tac":3,"tn":"Controle de Qualidade da Auditoria Governamental"},{"a":"Planejamento estratégico de ações de controle","p":"Alta"},{"a":"Auditoria baseada em risco","p":"Alta","tq":33,"tac":19,"tn":"Risco de Auditoria. Confiança e Asseguração em Auditoria"}],"dg":[{"n":"Auditoria Governamental","q":568,"ac":360},{"n":"Trabalhos de Auditoria","q":299,"ac":186},{"n":"Auditoria Independente","q":161,"ac":102},{"n":"Conceitos Básicos de Auditoria Governamental (ISSAI 1, seção 2; NAGs, 1101 -1124)","q":135,"ac":97},{"n":"Outras Questões e Tópicos Mesclados de Auditoria Governamental","q":77,"ac":42},{"n":"Classificação dos Tipos de Auditoria","q":68,"ac":42},{"n":"Princípios, Propósitos e Abrangência da Auditoria Governamental","q":65,"ac":47},{"n":"Testes e Procedimentos em Auditoria","q":47,"ac":25},{"n":"Planejamento de Auditoria Independente","q":44,"ac":28},{"n":"Auditoria Operacional","q":38,"ac":21},{"n":"Auditoria Interna (Controle Interno)","q":37,"ac":21},{"n":"Auditoria de Regularidade (Conformidade, Contábil, Financeira, etc)","q":34,"ac":19},{"n":"Risco de Auditoria. Confiança e Asseguração em Auditoria","q":33,"ac":19},{"n":"Materialidade, Relevância e Identificação de Riscos e Controles","q":30,"ac":18},{"n":"Normas Profissionais do Auditor Independente","q":26,"ac":21},{"n":"Evidência em Auditoria","q":25,"ac":17},{"n":"Entidades de Fiscalização Superior","q":24,"ac":14},{"n":"Estrutura Conceitual para Trabalhos de Asseguração","q":23,"ac":15},{"n":"Objetivos, Aplicabilidade e Estrutura das Normas de Auditoria Governamental","q":21,"ac":15},{"n":"Metodologia de Auditoria (ISSAI 1, seção 13; NAGs 4100)","q":20,"ac":14},{"n":"Aspectos Gerais da Auditoria Interna","q":18,"ac":9},{"n":"Objetivos Gerais do Auditor","q":17,"ac":13},{"n":"Relatório, Certificado, Parecer e Nota (Auditoria Governamental)","q":13,"ac":8},{"n":"Sem Classificação","q":13,"ac":12},{"n":"Profissionais de Auditoria Governamental","q":12,"ac":6},{"n":"Diferenças entre a Auditoria Interna e a Auditoria Independente","q":11,"ac":8},{"n":"Planejamento de Auditoria de Regularidade","q":9,"ac":4},{"n":"Características Inerentes ao Auditor (Julgamento e Ceticismo)","q":9,"ac":8},{"n":"Materialidade, Relevância e Risco em Auditoria Independente","q":8,"ac":5},{"n":"Normas Internacionais de Auditoria Interna (IIA)","q":8,"ac":4},{"n":"Controle de Qualidade da Auditoria Governamental","q":6,"ac":3},{"n":"Amostragem em Auditoria","q":6,"ac":3},{"n":"Elementos de Auditoria: Auditor, Responsável e Usuários","q":5,"ac":2},{"n":"Governança Corporativa, Controle e Análise de Risco","q":5,"ac":5},{"n":"Modelos de Controle e de Análise de Risco do COSO","q":5,"ac":5},{"n":"Execução de Auditoria de Regularidade","q":3,"ac":1},{"n":"Sem Classificação","q":3,"ac":2},{"n":"Tipos de Trabalho: de Certificação e de Relatório Direto","q":2,"ac":1},{"n":"Auditoria de Regularidade: Propósito, Características, Contexto","q":2,"ac":2},{"n":"Monitoramento das Recomendações e Determinações","q":2,"ac":1},{"n":"Documentação de Auditoria/Papéis de Trabalho","q":2,"ac":1},{"n":"Condições Prévias para Auditoria (ISSAI 200, itens 18-26)","q":1,"ac":1},{"n":"Objeto e Escopo de Auditoria de Regularidade","q":1,"ac":1},{"n":"Julgamento e Ceticismo Profissional","q":1,"ac":1},{"n":"Transações e Eventos Subsequentes (Auditoria)","q":1,"ac":1},{"n":"Utilização do Trabalho de Outros Profissionais (Auditoria)","q":1,"ac":0},{"n":"Normas Complementares do Processo de Auditoria","q":1,"ac":1},{"n":"Normas de Auditoria da ISO","q":1,"ac":1}],"pv":8,"qp":8},{"id":"direito-administrativo","n":"Direito Administrativo","c":"#C86A22","q":686,"ac":525,"er":161,"as":[{"a":"Atos administrativos: conceito, atributos, elementos, extinção, invalidação, revogação x anulação","p":"Alta","tq":73,"tac":63,"tn":"Atos Administrativos"},{"a":"Poderes administrativos: hierárquico, disciplinar, regulamentar, de polícia","p":"Alta"},{"a":"Serviços públicos: classificação, delegação (concessão, permissão, autorização)","p":"Alta","tq":4,"tac":2,"tn":"Autorização, Permissão e Concessão (Serviços Públicos - Lei nº 8.987/1995)"},{"a":"Responsabilidade civil do Estado: teorias, excludentes, direito de regresso","p":"Alta","tq":23,"tac":22,"tn":"Responsabilidade Civil do Estado"},{"a":"Organização administrativa: centralização/descentralização, direta/indireta, entidades paraestatais","p":"Alta","tq":75,"tac":54,"tn":"Organização Administrativa"},{"a":"Controle da Administração (administrativo, judicial, legislativo)","p":"Alta","tq":34,"tac":22,"tn":"Controle da Administração"},{"a":"Lei de Improbidade nº 8.429/1992","p":"Alta","tq":20,"tac":11,"tn":"Improbidade Administrativa (Lei nº 8.429/1992)"},{"a":"LGPD (Lei nº 13.709/2018)","p":"Alta"},{"a":"Lei de Abuso de Autoridade (Lei nº 13.869/2019)","p":"Alta"},{"a":"LAI (Lei nº 12.527/2011)","p":"Alta","tq":1,"tac":1,"tn":"Tópicos Mesclados da Lei nº 12.527/2011"},{"a":"Domínio público: bens públicos, imprescritibilidade, impenhorabilidade, não oneração","p":"Alta","tq":1,"tac":1,"tn":"Domínio Público e Bens Públicos: Conceito"},{"a":"Agentes públicos: Lei Estadual nº 6.123/1968","p":"Alta","tq":37,"tac":24,"tn":"Lei Estadual nº 6.123/1968 - Estatuto dos Servidores de PE"},{"a":"Processo administrativo: Lei Estadual nº 11.781/2000","p":"Alta","tq":3,"tac":0,"tn":"Lei Estadual nº 11.781/2000 - Processo Administrativo (PE)"},{"a":"Licitações: Lei nº 14.133/2021","p":"Alta","tq":41,"tac":30,"tn":"Licitações (arts. 11 a 88 da Lei nº 14.133/2021)"},{"a":"Decreto Estadual nº 54.700/2023 (SRP em PE)","p":"Alta"},{"a":"Lei nº 13.303/2016","p":"Alta","tq":1,"tac":1,"tn":"Lei nº 13.303/2016 - Estatuto Jurídico da EP e SEM (arts. 1º a 27)"}],"dg":[{"n":"Licitações e Contratos Administrativos (Lei nº 14.133/2021)","q":158,"ac":122},{"n":"Regime Jurídico Administrativo","q":123,"ac":100},{"n":"Organização Administrativa","q":75,"ac":54},{"n":"Organização Administrativa da União","q":75,"ac":54},{"n":"Do Âmbito de Aplicação, Definições e Agentes Públicos (arts. 1º a 4º, 6º a 10 da Lei nº 14.133/2021)","q":74,"ac":65},{"n":"Atos Administrativos","q":73,"ac":63},{"n":"Princípios Expressos, Explícitos ou Constitucionais","q":68,"ac":56},{"n":"Princípios Implícitos, Reconhecidos e Infraconstitucionais","q":49,"ac":39},{"n":"Poderes e Deveres da Administração","q":49,"ac":41},{"n":"Licitações (arts. 11 a 88 da Lei nº 14.133/2021)","q":41,"ac":30},{"n":"Legislação Administrativa do Estado de PE","q":40,"ac":24},{"n":"Lei Estadual nº 6.123/1968 - Estatuto dos Servidores de PE","q":37,"ac":24},{"n":"Controle da Administração","q":34,"ac":22},{"n":"Agentes Públicos","q":27,"ac":21},{"n":"Contratos Administrativos (arts. 89 a 154 da Lei nº 14.133/2021)","q":27,"ac":16},{"n":"Objetivos, Fases e Formalidades (arts. 11 a 17 da Lei nº 14.133/2021)","q":24,"ac":17},{"n":"Responsabilidade Civil do Estado","q":23,"ac":22},{"n":"Administração Indireta","q":22,"ac":18},{"n":"Do Provimento (arts. 10 a 80 da Lei Estadual nº 6.123/1968)","q":22,"ac":17},{"n":"Terceiro Setor (OSs, OSCIPs, Sistema S e Fundações de Apoio)","q":21,"ac":11},{"n":"Improbidade Administrativa (Lei nº 8.429/1992)","q":20,"ac":11},{"n":"Origem, Conceito e Fontes do Direito Administrativo","q":17,"ac":14},{"n":"Poder de Polícia","q":16,"ac":13},{"n":"Administração Direta (Órgãos Públicos)","q":16,"ac":12},{"n":"Serviços Públicos","q":16,"ac":9},{"n":"Aspectos Constitucionais pertinentes aos Servidores Públicos","q":16,"ac":13},{"n":"Elementos, Requisitos e Pressupostos (Atos Administrativos)","q":14,"ac":12},{"n":"Atributos ou Características dos Atos Administrativos","q":14,"ac":14},{"n":"Desfazimento do Ato Administrativo (Anulação, Revogação, Cassação, Caducidade, Contraposição)","q":14,"ac":12},{"n":"Controle Administrativo (Direito Administrativo)","q":13,"ac":9},{"n":"Dos Atos de Improbidade (arts. 9º a 11 da Lei nº 8.429/1992)","q":13,"ac":8},{"n":"Princípios (art. 5º da Lei nº 14.133/2021)","q":13,"ac":11},{"n":"Atos Administrativos: Espécies, Classificação, Fases de Constituição","q":12,"ac":10},{"n":"Acesso à Informação","q":12,"ac":9},{"n":"Lei nº 12.527/2011 - Lei de Acesso à Informação","q":12,"ac":9},{"n":"Domínio Público","q":11,"ac":10},{"n":"Conceitos Iniciais e Teorias da Responsabilidade","q":10,"ac":10},{"n":"Bens Públicos (Direito Administrativo)","q":10,"ac":9},{"n":"Poder Disciplinar","q":9,"ac":8},{"n":"Controle Legislativo ou Parlamentar","q":9,"ac":6},{"n":"Poder Vinculado e Discricionário","q":8,"ac":6},{"n":"Poder Regulamentar","q":8,"ac":6},{"n":"Desconcentração e Descentralização","q":8,"ac":8},{"n":"Jurisprudência dos Tribunais Superiores em Matéria Administrativa","q":8,"ac":3},{"n":"Parlamentar Indireto (Tribunais de Contas e Controle Técnico-Financeiro)","q":7,"ac":5},{"n":"Duração dos Contratos (arts. 105 a 114 da Lei nº 14.133/2021)","q":7,"ac":3},{"n":"Regime Jurídico da Administração e Regime Jurídico Administrativo","q":6,"ac":5},{"n":"Tópicos Mesclados de Atos Administrativos","q":6,"ac":4},{"n":"Concessões (Serviços Públicos - Lei nº 8.987/1995)","q":6,"ac":3},{"n":"Modalidades de Licitação (arts. 28 a 32 da Lei nº 14.133/2021)","q":6,"ac":5},{"n":"Alteração dos Contratos e dos Preços (art. 124 a 136 da Lei nº 14.133/2021)","q":6,"ac":2},{"n":"Do Processo Administrativo e sua Revisão (arts. 214 a 249 da Lei Estadual nº 6.123/1968)","q":6,"ac":3},{"n":"Conceito de Atos Administrativos","q":5,"ac":4},{"n":"Convalidação e Conversão dos Atos Administrativos","q":5,"ac":4},{"n":"Tópicos Mesclados de Poderes da Administração","q":5,"ac":5},{"n":"Classificação dos Bens Públicos","q":5,"ac":5},{"n":"Classificação dos Agentes Públicos","q":5,"ac":3},{"n":"Acumulação de Cargos e Empregos Públicos e Funções","q":5,"ac":3},{"n":"Tópicos Mesclados de Organização Administrativa da União","q":4,"ac":2},{"n":"Responsabilidade Objetiva das Empresas Estatais e das Prestadoras de Serviços Públicos","q":4,"ac":4},{"n":"Autorização, Permissão e Concessão (Serviços Públicos - Lei nº 8.987/1995)","q":4,"ac":2},{"n":"Lei nº 13.019/2014 - Estatuto das Parcerias","q":4,"ac":3},{"n":"Lei nº 12.846/2013 - Lei Anticorrupção","q":4,"ac":3},{"n":"Funções, Cargos e Empregos Públicos","q":4,"ac":4},{"n":"Contratação Direta, Inexigibilidade e Dispensa (arts. 72 a 75 da Lei nº 14.133/2021)","q":4,"ac":4},{"n":"Prerrogativas da Administração (art. 104 da Lei nº 14.133/2021)","q":4,"ac":4},{"n":"Disposições Gerais (arts. 1º a 5º da Lei nº 12.527/2011)","q":4,"ac":4},{"n":"Do Procedimento de Acesso à Informação (arts. 10 a 20 da Lei nº 12.527/2011)","q":4,"ac":2},{"n":"Dos Direitos e Vantagens (arts. 85 a 189 da Lei Estadual nº 6.123/1968)","q":4,"ac":1},{"n":"Do Regime Disciplinar (arts. 190 a 213 da Lei Estadual nº 6.123/1968)","q":4,"ac":2},{"n":"Agências Reguladoras e Executivas","q":3,"ac":2},{"n":"Responsabilidade dos Agentes Públicos e Direito de Regresso","q":3,"ac":3},{"n":"Tópicos Mesclados de Responsabilidade Civil do Estado","q":3,"ac":3},{"n":"Lei nº 11.079/2004 - Parceria Público-Privada (PPP)","q":3,"ac":1},{"n":"Controle da Administração: Conceitos, Princípios, Abrangência e Classificações","q":3,"ac":2},{"n":"Controle Jurisdicional","q":3,"ac":0},{"n":"Remuneração (Componentes, Subsídio, Teto, Equiparação, Vinculação, Irredutibilidade, etc)","q":3,"ac":3},{"n":"Mandato Eletivo (art. 38 da CF)","q":3,"ac":2},{"n":"Das Disposições Gerais (arts. 1º a 8º-A da Lei nº 8.429/1992)","q":3,"ac":2},{"n":"Garantias (arts. 96 a 102 da Lei nº 14.133/2021)","q":3,"ac":2},{"n":"Alocação de Riscos (art. 103 da Lei nº 14.133/2021)","q":3,"ac":1},{"n":"Execução dos Contratos (arts. 115 a art. 123 da Lei nº 14.133/2021)","q":3,"ac":3},{"n":"Irregularidades (arts. 155 a 173 da Lei nº 14.133/2021)","q":3,"ac":0},{"n":"Lei Estadual nº 11.781/2000 - Processo Administrativo (PE)","q":3,"ac":0},{"n":"Mérito Administrativo","q":2,"ac":2},{"n":"Abuso de Poder: Excesso de Poder e Desvio de Finalidade (Poderes da Administração)","q":2,"ac":2},{"n":"Parlamentar Direto (Controle Político)","q":2,"ac":1},{"n":"Controle Popular ou Social","q":2,"ac":2},{"n":"Da Responsabilização Administrativa (arts. 6º e 7º da Lei nº 12.846/2013)","q":2,"ac":1},{"n":"Características dos Bens Públicos","q":2,"ac":2},{"n":"Formas de Utilização de Bens Públicos","q":2,"ac":1},{"n":"Estabilidade e Estágio Probatório","q":2,"ac":2},{"n":"Regime Previdenciário (Aposentadoria, Pensão, RPPS)","q":2,"ac":2},{"n":"Lei nº 8.112/1990 - Estatuto dos Servidores Federais","q":2,"ac":1},{"n":"Das Penas (art. 12 da Lei nº 8.429/1992)","q":2,"ac":0},{"n":"Instrução do Processo Licitatório (arts. 18 a 27 da Lei nº 14.133/2021)","q":2,"ac":2},{"n":"Disposições Setoriais, Compras, Serviços (arts. 40 a 52 da Lei nº 14.133/2021)","q":2,"ac":1},{"n":"Fases da Licitação - Julgamento, Habilitação e Encerramento (arts. 55 a 71 da Lei nº 14.133/2021)","q":2,"ac":1},{"n":"Infrações e Sanções Administrativas (arts. 155 a 163 da Lei nº 14.133/2021)","q":2,"ac":0},{"n":"Do Acesso a Informações e da sua Divulgação (arts. 6º a 9º da Lei nº 12.527/2011)","q":2,"ac":2},{"n":"Jurisprudência dos Tribunais Superiores sobre Administração Indireta","q":2,"ac":0},{"n":"Jurisprudência dos Tribunais Superiores sobre Responsabilidade Civil do Estado","q":2,"ac":1},{"n":"Teoria dos Motivos Determinantes","q":1,"ac":1},{"n":"Poder Hierárquico","q":1,"ac":1},{"n":"Lei nº 13.303/2016 - Estatuto Jurídico da EP e SEM (arts. 1º a 27)","q":1,"ac":1},{"n":"Responsabilidade Civil por Atos Omissivos","q":1,"ac":1},{"n":"Responsabilidade por Atos Legislativos e Judiciais","q":1,"ac":0},{"n":"Casos Especiais (Danos decorrentes de Obra Pública, Responsabilidade dos Tabeliães, etc.)","q":1,"ac":1},{"n":"Princípios (Serviços Públicos - Lei nº 8.987/1995)","q":1,"ac":1},{"n":"Repartição de Competências (Serviços Públicos)","q":1,"ac":1},{"n":"Deveres e Direitos (Usuários, Concedente, Concessionária, Licitações - Lei nº 8.987/1995)","q":1,"ac":1},{"n":"Subconcessão (Serviços Públicos - Lei nº 8.987/1995)","q":1,"ac":0},{"n":"Tópicos Mesclados de Serviços Públicos","q":1,"ac":0},{"n":"Disposições Gerais (arts. 1º a 4º da Lei nº 12.846/2013)","q":1,"ac":1},{"n":"Dos Atos Lesivos à Administração Pública Nacional ou Estrangeira (art. 5º da Lei nº 12.846/2013)","q":1,"ac":1},{"n":"Domínio Público e Bens Públicos: Conceito","q":1,"ac":1},{"n":"Tópicos Mesclados de Bens Públicos (Direito Administrativo)","q":1,"ac":1},{"n":"Concurso Público","q":1,"ac":1},{"n":"Do Regime Disciplinar (arts. 116 a 142 da Lei nº 8.112/1990)","q":1,"ac":1},{"n":"Do Processo Administrativo Disciplinar (arts. 143 a 182 da Lei nº 8.112/1990)","q":1,"ac":0},{"n":"Do Procedimento Administrativo e do Processo Judicial (arts. 14 a 18-A da Lei nº 8.429/1992)","q":1,"ac":1},{"n":"Da Prescrição (arts. 23 a 23-C da Lei nº 8.429/1992)","q":1,"ac":0},{"n":"Critérios de Julgamento (arts. 33 a 39 da Lei nº 14.133/2021)","q":1,"ac":0},{"n":"Conceitos e Características dos Contratos Administrativos. Formalização dos Contratos (arts. 89 a 95 da Lei nº 14.133/2021)","q":1,"ac":1},{"n":"Controle das Contratações (arts. 169 a 173 da Lei nº 14.133/2021)","q":1,"ac":0},{"n":"Das Restrições de Acesso à Informação (arts. 21 a 31 da Lei nº 12.527/2011)","q":1,"ac":0},{"n":"Tópicos Mesclados da Lei nº 12.527/2011","q":1,"ac":1},{"n":"Jurisprudência dos Tribunais Superiores sobre Acesso à Informação e Transparência","q":1,"ac":0},{"n":"Jurisprudência dos Tribunais Superiores sobre Agente Públicos","q":1,"ac":0},{"n":"Jurisprudência dos Tribunais Superiores sobre Improbidade Administrativa","q":1,"ac":1},{"n":"Jurisprudência dos Tribunais Superiores sobre Processo Administrativo Disciplinar","q":1,"ac":1},{"n":"Disposições Preliminares (arts. 1º a 9º da Lei Estadual nº 6.123/1968)","q":1,"ac":1}],"pv":11,"qp":11},{"id":"direito-constitucional","n":"Direito Constitucional","c":"#17456F","q":363,"ac":245,"er":118,"as":[{"a":"Conceito, aplicabilidade das normas constitucionais (eficácia plena, contida, limitada), normas programáticas","p":"Alta","tq":24,"tac":17,"tn":"Eficácia das Normas Constitucionais"},{"a":"Poder constituinte originário e derivado","p":"Alta","tq":15,"tac":8,"tn":"Poder Constituinte (Originário, Derivado, Reformador, Revisor, Decorrente, etc)"},{"a":"Interpretação constitucional","p":"Alta","tq":10,"tac":4,"tn":"Métodos e Princípios de Interpretação das Normas Constitucionais"},{"a":"Controle de constitucionalidade: sistemas, ADC, ADI, ADPF, ADO, ADI interventiva","p":"Alta","tq":1,"tac":0,"tn":"Controle de Constitucionalidade"},{"a":"Jurisprudência do STF sobre controle externo","p":"Alta","tq":1,"tac":0,"tn":"Jurisprudência dos Tribunais Superiores sobre Controle de Constitucionalidade"},{"a":"Súmula 347 STF e os TCEs","p":"Alta"},{"a":"Princípios fundamentais","p":"Alta","tq":16,"tac":16,"tn":"Dos Princípios Fundamentais da Constituição (arts. 1º a 4º da CF/1988)"},{"a":"Direitos e deveres individuais, sociais e políticos","p":"Alta","tq":10,"tac":9,"tn":"Dos Direitos e Deveres Individuais e Coletivos (art. 5º da CF/1988)"},{"a":"Organização político-administrativa: União, Estados, DF, Municípios","p":"Alta","tq":9,"tac":6,"tn":"Da Organização Político-Administrativa (arts. 18 e 19 da CF/1988)"},{"a":"Poder Executivo e Poder Legislativo: estrutura, atribuições, processo legislativo, CPIs","p":"Alta","tq":53,"tac":39,"tn":"Do Poder Legislativo (arts. 44 a 75 da CF/1988)"},{"a":"Poder Judiciário e CNJ","p":"Alta","tq":9,"tac":5,"tn":"Do Poder Judiciário (arts. 92 a 126 da CF/1988)"},{"a":"Funções essenciais à justiça (MP, advocacias, Defensoria)","p":"Alta"},{"a":"Sistema Tributário Nacional (princípios e competências) e Finanças Públicas (orçamentos)","p":"Alta","tq":31,"tac":26,"tn":"Dos Princípios Gerais (Sistema Tributário Nacional, arts. 145 a 149-B da CF/1988)"}],"dg":[{"n":"Teoria do Direito Constitucional","q":94,"ac":63},{"n":"Da Organização dos Poderes (arts. 44 a 135 da CF/1988)","q":64,"ac":46},{"n":"Do Poder Legislativo (arts. 44 a 75 da CF/1988)","q":53,"ac":39},{"n":"Da Organização do Estado (arts. 18 a 43 da CF/1988)","q":52,"ac":32},{"n":"Tributação e Orçamento (arts. 145 a 169 da CF/1988)","q":52,"ac":39},{"n":"Sistema Tributário Nacional (arts. 145 a 162 da CF/1988)","q":40,"ac":31},{"n":"Dos Princípios Gerais (Sistema Tributário Nacional, arts. 145 a 149-B da CF/1988)","q":31,"ac":26},{"n":"Jurisprudência dos Tribunais Superiores em Matéria Constitucional","q":31,"ac":16},{"n":"Dos Direitos e Garantias Fundamentais (arts. 5º a 17 da CF/1988)","q":28,"ac":22},{"n":"Teoria Geral do Direito Constitucional","q":25,"ac":22},{"n":"Da Fiscalização Contábil, Financeira e Orçamentária (arts. 70 a 75 da CF/1988)","q":25,"ac":22},{"n":"Eficácia das Normas Constitucionais","q":24,"ac":17},{"n":"Administração Pública (arts. 37 a 43 da CF/1988)","q":22,"ac":16},{"n":"Formas de Estado e Governo, Sistemas de Governo, Separação de Poderes. Freio e Contrapesos","q":21,"ac":20},{"n":"Processo Legislativo (arts. 59 a 69 da CF/1988)","q":20,"ac":11},{"n":"Competências para Fiscalização e Tribunal de Contas da União (arts. 70 a 73 da CF/1988)","q":18,"ac":17},{"n":"Constituição: Conceito, Estrutura, Supremacia e Classificação","q":16,"ac":10},{"n":"Dos Princípios Fundamentais da Constituição (arts. 1º a 4º da CF/1988)","q":16,"ac":16},{"n":"Poder Constituinte (Originário, Derivado, Reformador, Revisor, Decorrente, etc)","q":15,"ac":8},{"n":"União: Bens e Competências Exclusivas, Privativas, Comuns e Concorrentes (arts. 20 a 24 da CF/1988)","q":13,"ac":6},{"n":"Disposições Gerais (Administração Pública - arts. 37 e 38 da CF/1988)","q":13,"ac":7},{"n":"Finanças Públicas (arts. 163 a 169 da CF/1988)","q":12,"ac":8},{"n":"Disposições Finais e Transitórias da CF/1988","q":11,"ac":3},{"n":"Emenda Constitucional nº 103/2019 (arts. 3º a 34) - Reforma da Previdência","q":11,"ac":3},{"n":"Métodos e Princípios de Interpretação das Normas Constitucionais","q":10,"ac":4},{"n":"Dos Direitos e Deveres Individuais e Coletivos (art. 5º da CF/1988)","q":10,"ac":9},{"n":"Dos Orçamentos (Finanças Públicas, arts. 165 a 169 da CF/1988)","q":10,"ac":7},{"n":"Da Organização Político-Administrativa (arts. 18 e 19 da CF/1988)","q":9,"ac":6},{"n":"Dos Servidores Públicos (arts. 39 a 41 da CF/1988)","q":9,"ac":9},{"n":"Do Poder Judiciário (arts. 92 a 126 da CF/1988)","q":9,"ac":5},{"n":"Características (Direitos Fundamentais)","q":7,"ac":4},{"n":"Da Emenda à Constituição (art. 60 da CF/1988)","q":6,"ac":2},{"n":"Medidas Provisórias","q":6,"ac":4},{"n":"Do Superior Tribunal de Justiça - STJ (arts. 104 e 105 da CF/1988)","q":6,"ac":3},{"n":"Jurisprudência dos Tribunais Superiores sobre Fiscalização Contábil, Financeira e Orçamentária","q":6,"ac":3},{"n":"Dos Impostos dos Estados e Distrito Federal (art. 155 da CF/1988)","q":5,"ac":3},{"n":"Ordem Social (arts. 193 a 232 da CF/1988)","q":5,"ac":4},{"n":"Direito Constitucional: Conceito e Fontes. Estado, Povo, Território, etc.","q":4,"ac":2},{"n":"Da Nacionalidade (arts. 12 e 13 da CF/1988)","q":4,"ac":2},{"n":"Espécies de Nacionalidade (Brasileiros Natos e Naturalizados)","q":4,"ac":2},{"n":"Direitos Políticos (arts. 14 a 16 da CF/1988)","q":4,"ac":4},{"n":"Inelegibilidades (Direitos Políticos)","q":4,"ac":4},{"n":"Municípios - Organização e Competências (arts. 29 a 31 da CF/1988)","q":4,"ac":3},{"n":"Das Comissões Parlamentares - Permanentes e Temporárias (art. 58 da CF/1988)","q":4,"ac":3},{"n":"Leis Ordinárias e Complementares","q":4,"ac":2},{"n":"Tribunais de Contas Estaduais, Distrital e Municipais","q":4,"ac":2},{"n":"Seguridade Social (arts. 194 a 204 da CF/1988)","q":4,"ac":3},{"n":"Jurisprudência dos Tribunais Superiores sobre Direitos e Deveres Individuais e Coletivos","q":4,"ac":1},{"n":"Jurisprudência dos Tribunais Superiores sobre Administração Pública","q":4,"ac":2},{"n":"Simetria Constitucional","q":3,"ac":2},{"n":"Intervenção Federal e Estadual (arts. 34 a 36 da CF/1988)","q":3,"ac":1},{"n":"Sistema de Controle Interno (art. 74 da CF/1988)","q":3,"ac":3},{"n":"Dos Tribunais Regionais Federais e Juízes Federais (arts. 106 a 110 da CF/1988)","q":3,"ac":2},{"n":"Defesa do Estado e das Instituições Democráticas (arts. 136 a 144 da CF/1988)","q":3,"ac":1},{"n":"Estado de Defesa e de Sítio (arts. 136 a 141 da CF/1988)","q":3,"ac":1},{"n":"Da Previdência Social (arts. 201 e 202 da CF/1988)","q":3,"ac":2},{"n":"Jurisprudência dos Tribunais Superiores sobre Organização Político-Administrativa","q":3,"ac":3},{"n":"Jurisprudência dos Tribunais Superiores sobre Comissões Parlamentares","q":3,"ac":1},{"n":"Constituição do Estado do Piauí (CE-PI)","q":3,"ac":1},{"n":"Fases do Processo Legislativo (Iniciativa, Discussão, Voto, Veto, Sanção, Promulgação e Publicação)","q":2,"ac":1},{"n":"Questões Mescladas de Processo Legislativo (arts. 59 a 69 da CF/1988)","q":2,"ac":2},{"n":"Do Poder Executivo (arts. 76 a 91 da CF/1988)","q":2,"ac":2},{"n":"Das Atribuições do Presidente da República (art. 84 da CF/1988)","q":2,"ac":2},{"n":"Normas Gerais (Finanças Públicas, arts. 163 e 164-A da CF/1988)","q":2,"ac":1},{"n":"Jurisprudência dos Tribunais Superiores sobre Organização, Competências e Bens dos Entes Federativos","q":2,"ac":1},{"n":"Jurisprudência dos Tribunais Superiores sobre Processo Legislativo","q":2,"ac":0},{"n":"Jurisprudência dos Tribunais Superiores sobre Finanças Públicas","q":2,"ac":2},{"n":"Aplicação das Normas Constitucionais no Tempo (Recepção, Repristinação, Desconstitucionalização)","q":1,"ac":0},{"n":"Gerações de Direitos Fundamentais","q":1,"ac":1},{"n":"Remédios Constitucionais (art. 5º, LXVIII a LXXIII e LXXVII da CF/1988)","q":1,"ac":1},{"n":"Habeas Data","q":1,"ac":1},{"n":"Dos Direitos Sociais (arts. 6º a 11 da CF/1988)","q":1,"ac":1},{"n":"Direitos Sociais e dos Trabalhadores (arts. 6º e 7º da CF/1988)","q":1,"ac":1},{"n":"Estados Federados - Organização, Competências, Bens (arts. 25 a 28 da CF/1988)","q":1,"ac":0},{"n":"Do Congresso Nacional (arts. 44 a 47 da CF/1988)","q":1,"ac":0},{"n":"Das Atribuições do Congresso Nacional (arts. 48 a 50 da CF/1988)","q":1,"ac":1},{"n":"Do Senado Federal (art. 52 da CF/1988)","q":1,"ac":1},{"n":"Dos Deputados e Senadores (arts. 53 a 56 da CF/1988)","q":1,"ac":1},{"n":"Limitações do Poder de Tributar (arts. 150 a 152 da CF/1988)","q":1,"ac":1},{"n":"Dos Impostos da União (arts. 153 e 154 da CF/1988)","q":1,"ac":0},{"n":"Do Imposto de Competência Compartilhada entre Estados, Distrito Federal e Municípios (arts. 156-A e 156-B da CF/1988)","q":1,"ac":0},{"n":"Da Repartição das Receitas Tributárias (arts. 157 a 162 da CF/1988)","q":1,"ac":1},{"n":"Disposições Gerais (Seguridade Social, arts. 194 e 195 da CF/1988)","q":1,"ac":1},{"n":"Da Educação, da Cultura e do Desporto (arts. 205 a 217 da CF/1988)","q":1,"ac":1},{"n":"Das Disposições Constitucionais Gerais (arts. 233 a 250 da CF/1988)","q":1,"ac":1},{"n":"Controle de Constitucionalidade","q":1,"ac":0},{"n":"Formas de Controle de Constitucionalidade","q":1,"ac":0},{"n":"Ações de Controle Concentrado de Constitucionalidade","q":1,"ac":0},{"n":"Ação Direta de Inconstitucionalidade (ADI)","q":1,"ac":0},{"n":"Jurisprudência dos Tribunais Superiores sobre Remédios Constitucionais","q":1,"ac":1},{"n":"Jurisprudência dos Tribunais Superiores sobre Direitos Sociais e dos Trabalhadores","q":1,"ac":1},{"n":"Jurisprudência dos Tribunais Superiores sobre Direitos Políticos","q":1,"ac":0},{"n":"Jurisprudência dos Tribunais Superiores sobre Congresso Nacional, Senado e Câmara dos Deputados","q":1,"ac":1},{"n":"Jurisprudência dos Tribunais Superiores sobre Controle de Constitucionalidade","q":1,"ac":0},{"n":"Constituição do Estado de Goiás (CE-GO)","q":1,"ac":1},{"n":"Constituição do Estado do Pará (CE-PA)","q":1,"ac":0},{"n":"Da Organização do Estado (arts. 10 a 50 da CE-PA)","q":1,"ac":0}],"pv":5,"qp":5},{"id":"contabilidade-geral","n":"Contabilidade Geral","c":"#3E8F86","q":957,"ac":694,"er":263,"as":[{"a":"Princípios e normas do CFC","p":"Média"},{"a":"Patrimônio e equação patrimonial","p":"Média","tq":143,"tac":118,"tn":"Conceito, Objeto, Finalidade, Técnicas Contábeis, Equação Patrimonial"},{"a":"Fatos contábeis","p":"Média","tq":47,"tac":32,"tn":"Atos e Fatos Contábeis"},{"a":"Escrituração: partidas dobradas, livros obrigatórios","p":"Média","tq":88,"tac":65,"tn":"Escrituração: Normas, Livros Contábeis, Lançamentos, Método das Partidas Dobradas"},{"a":"Plano de contas","p":"Média","tq":21,"tac":15,"tn":"Plano de Contas"},{"a":"Balanço patrimonial, DRE, DFC e DVA","p":"Média","tq":41,"tac":17,"tn":"Balanço Patrimonial"},{"a":"Regimes de competência e caixa","p":"Média","tq":56,"tac":47,"tn":"Regimes Contábeis (Competência, Caixa e Misto)"},{"a":"Contas patrimoniais e de resultado","p":"Média"},{"a":"Depreciação, amortização, exaustão","p":"Média","tq":25,"tac":18,"tn":"Depreciação, Amortização e Exaustão"},{"a":"Provisões, contingências","p":"Média"},{"a":"Avaliação e contabilização de ativos e passivos","p":"Média"}],"dg":[{"n":"Contabilidade Básica","q":525,"ac":407},{"n":"Ativo","q":173,"ac":128},{"n":"Conceito, Objeto, Finalidade, Técnicas Contábeis, Equação Patrimonial","q":143,"ac":118},{"n":"Estrutura Conceitual Básica da Contabilidade (CPC 00)","q":138,"ac":111},{"n":"Demonstrações Contábeis","q":135,"ac":71},{"n":"Escrituração: Normas, Livros Contábeis, Lançamentos, Método das Partidas Dobradas","q":88,"ac":65},{"n":"Regimes Contábeis (Competência, Caixa e Misto)","q":56,"ac":47},{"n":"Atos e Fatos Contábeis","q":47,"ac":32},{"n":"Balanço Patrimonial","q":41,"ac":17},{"n":"Investimentos","q":38,"ac":28},{"n":"Princípios Contábeis","q":36,"ac":31},{"n":"Teoria das Contas (Personalística, Patrimonialista, e Materialística)","q":30,"ac":18},{"n":"Ativo Imobilizado (Conceito, Classificação, Mensuração Inicial, Reavaliação)","q":30,"ac":23},{"n":"Demonstração do Resultado do Exercício (DRE) e Destinação do Resultado","q":30,"ac":18},{"n":"Estoques e Operação com Mercadorias","q":29,"ac":18},{"n":"Depreciação, Amortização e Exaustão","q":25,"ac":18},{"n":"Análise Vertical e Horizontal das Demonstrações Contábeis","q":22,"ac":10},{"n":"Plano de Contas","q":21,"ac":15},{"n":"CPC 16 - Tratamento Contábil para os Estoques","q":21,"ac":14},{"n":"Balancete de Verificação","q":20,"ac":15},{"n":"Investimentos Avaliados pelo Custo ou MEP (CPC 18, Lei 6.404, art. 248)","q":20,"ac":16},{"n":"Demonstração do Valor Adicionado (DVA - CPC 09, Lei 6.404, art. 188, II)","q":20,"ac":7},{"n":"Realizável a Longo Prazo","q":18,"ac":15},{"n":"Propriedades para Investimento (CPC 28)","q":18,"ac":12},{"n":"Elaboração e Apresentação das Demonstrações Contábeis (CPC 26, Lei 6.404, arts. 176 e 177)","q":18,"ac":11},{"n":"Disponibilidades: Equivalentes de Caixa, Conciliação, Cheques, Numerários em Trânsito, etc","q":16,"ac":12},{"n":"Demonstração de Fluxo de Caixa (DFC - CPC 03, Lei 6.404, art. 188, I)","q":16,"ac":13},{"n":"Contas a receber e Perda com Créditos de Liquidação Duvidosa (PCLD)","q":14,"ac":8},{"n":"Outros CPCs","q":11,"ac":9},{"n":"CPC 12: Ajuste a Valor Presente","q":11,"ac":9},{"n":"Ativos Intangíveis (CPC 04, Lei 6.404)","q":9,"ac":9},{"n":"Instrumentos Financeiros","q":7,"ac":6},{"n":"Redução ao Valor Recuperável de Ativos (CPC 01, Lei 6.404, art. 183, §3º, I)","q":6,"ac":4},{"n":"Operações com Mercadorias (CMV, RCM, Tributos, Frete, etc.)","q":5,"ac":2},{"n":"Ativo Diferido (Extinto)","q":5,"ac":1},{"n":"Ativo Não Circulante Mantido p/ Venda e Operação Descontinuada (CPC 31)","q":4,"ac":3},{"n":"Demonstração de Resultados Abrangentes (DRA)","q":4,"ac":0},{"n":"Critérios de Avaliação do Estoque (PEPS, UEPS, Média Ponderada)","q":3,"ac":2},{"n":"Demonstração de Lucros ou Prejuízos Acumulados (DLPA)","q":3,"ac":3},{"n":"Erros de Escrituração","q":2,"ac":2},{"n":"Passivo Exigível","q":2,"ac":1},{"n":"Empréstimos e Fornecedores","q":2,"ac":1},{"n":"Demonstração das Mutações do Patrimônio Líquido (DMPL)","q":2,"ac":1},{"n":"Índices e Quocientes Financeiros","q":2,"ac":1},{"n":"Índices de Liquidez. Capital Circulante Líquido","q":2,"ac":1},{"n":"Goodwill","q":1,"ac":1},{"n":"Patrimônio Líquido","q":1,"ac":1},{"n":"Reserva de Reavaliação (Extinta)","q":1,"ac":1},{"n":"Operações com Duplicatas","q":1,"ac":1},{"n":"Notas Explicativas (Contabilidade Geral)","q":1,"ac":1}],"pv":4,"qp":4},{"id":"administracao-publica","n":"Administração Pública","c":"#4763A8","q":337,"ac":273,"er":64,"as":[{"a":"Modelos de gestão pública: patrimonialista, burocrático e gerencial","p":"Média","tq":19,"tac":16,"tn":"Administração Gerencial (Nova Gestão Pública ou Modelo Pós-Burocrático)"},{"a":"Reforma do Estado e Nova Gestão Pública","p":"Média","tq":19,"tac":16,"tn":"Administração Gerencial (Nova Gestão Pública ou Modelo Pós-Burocrático)"},{"a":"Governança, accountability, transparência e participação social","p":"Média","tq":59,"tac":53,"tn":"Accountability e Transparência"},{"a":"Planejamento governamental: PPA, LDO, LOA","p":"Média"},{"a":"Gestão por resultados e indicadores","p":"Média","tq":19,"tac":14,"tn":"Gestão por Resultados"},{"a":"Ciclo de políticas públicas: agenda, formulação, implementação, monitoramento e avaliação","p":"Média","tq":3,"tac":3,"tn":"Implementação das Políticas Públicas"},{"a":"Políticas públicas baseadas em evidências","p":"Média","tq":87,"tac":76,"tn":"Políticas Públicas e Programas Governamentais"},{"a":"Descentralização e controle social","p":"Média","tq":5,"tac":5,"tn":"Participação Social nos Processos de Formulação, Implementação, Avaliação e Controle."}],"dg":[{"n":"Políticas Públicas e Programas Governamentais","q":87,"ac":76},{"n":"Accountability e Transparência","q":59,"ac":53},{"n":"Governabilidade, Governança e Intermediação de Interesses","q":40,"ac":32},{"n":"Formação da Agenda e Formulação das Políticas Públicas. Modelos de Tomada de Decisão","q":39,"ac":34},{"n":"Modelos Teóricos de Gestão Pública","q":36,"ac":30},{"n":"Processo de Planejamento","q":23,"ac":15},{"n":"Governança Pública","q":22,"ac":18},{"n":"Processos Participativos de Gestão Pública","q":22,"ac":20},{"n":"Governo Eletrônico","q":21,"ac":13},{"n":"Evolução da APU no Brasil","q":21,"ac":13},{"n":"Indicadores de Desempenho","q":21,"ac":13},{"n":"Conceito de Políticas Públicas. Tipos de Políticas Públicas (Distributivas, Regulatórias, etc)","q":20,"ac":17},{"n":"Administração Gerencial (Nova Gestão Pública ou Modelo Pós-Burocrático)","q":19,"ac":16},{"n":"Gestão da Qualidade","q":19,"ac":14},{"n":"Gestão por Resultados","q":19,"ac":14},{"n":"A Reforma Gerencial no Brasil","q":18,"ac":12},{"n":"Administração Burocrática","q":16,"ac":13},{"n":"Governança Corporativa","q":12,"ac":9},{"n":"Avaliação das Políticas Públicas (Inclui Teorias Contemporâneas e Modelos de Análise)","q":11,"ac":9},{"n":"Introdução à Administração","q":6,"ac":4},{"n":"Eficiência, Eficácia e Efetividade","q":6,"ac":4},{"n":"Governabilidade","q":6,"ac":5},{"n":"Controle das Políticas Públicas. Transparência e Accountability","q":5,"ac":4},{"n":"Participação Social nos Processos de Formulação, Implementação, Avaliação e Controle.","q":5,"ac":5},{"n":"Federalismo e Descentralização de Políticas Públicas","q":4,"ac":4},{"n":"Outros Programas","q":4,"ac":4},{"n":"Implementação das Políticas Públicas","q":3,"ac":3},{"n":"A Reforma Burocrática no Brasil","q":2,"ac":1},{"n":"Gestão de Pessoas","q":2,"ac":2},{"n":"Desempenho","q":2,"ac":2},{"n":"Administração Patrimonialista","q":1,"ac":1},{"n":"Patrimonialismo no Brasil","q":1,"ac":0},{"n":"Balanced Scorecard (BSC)","q":1,"ac":1},{"n":"Planejamento e Estratégia no Setor Público","q":1,"ac":1},{"n":"Gestão por Competências","q":1,"ac":1}],"pv":3,"qp":3},{"id":"lingua-portuguesa","n":"Língua Portuguesa","c":"#8E4F7E","q":328,"ac":226,"er":102,"as":[{"a":"Interpretação de texto","p":"Média","tq":41,"tac":26,"tn":"Interpretação de Textos (Compreensão)"},{"a":"Gêneros textuais (narrativo, descritivo, argumentativo)","p":"Média"},{"a":"Semântica: sentido dos vocábulos, campos semânticos, tempos e modos verbais","p":"Média"},{"a":"Morfologia: classes gramaticais, formação de palavras, flexão","p":"Média","tq":58,"tac":40,"tn":"Classes de Palavras"},{"a":"Sintaxe: termos da oração, coordenação/subordinação, concordância e regência","p":"Média"},{"a":"Crase, pontuação, acentuação, ortografia","p":"Média"},{"a":"Reescritura de frases: substituição, deslocamento, paralelismo","p":"Média"},{"a":"Variação linguística","p":"Média"}],"dg":[{"n":"Ortografia","q":68,"ac":50},{"n":"Morfologia","q":65,"ac":44},{"n":"Classes de Palavras","q":58,"ac":40},{"n":"Interpretação de Textos (Compreensão)","q":41,"ac":26},{"n":"Tipologia e Gênero Textual","q":31,"ac":23},{"n":"Ortografia - Casos Gerais e Emprego das Letras","q":28,"ac":22},{"n":"Acentuação","q":25,"ac":17},{"n":"Semântica","q":24,"ac":15},{"n":"Sintaxe","q":20,"ac":15},{"n":"Adjetivo","q":19,"ac":12},{"n":"Verbo","q":15,"ac":11},{"n":"Linguagem","q":15,"ac":9},{"n":"Coerência. Coesão (Anáfora, Catáfora, Uso dos Conectores - Pronomes Relativos, Conjunções, etc)","q":14,"ac":10},{"n":"Tipos de Discurso (Direto, Indireto e Indireto Livre)","q":13,"ac":8},{"n":"Conjugação. Reconhecimento e Emprego dos Modos e Tempos Verbais","q":12,"ac":8},{"n":"Outras Questões de Semântica","q":12,"ac":7},{"n":"Uso do Hífen","q":10,"ac":7},{"n":"Frase, Oração e Período","q":9,"ac":8},{"n":"Paralelismo","q":9,"ac":7},{"n":"Reescrita de Frases. Substituição de Palavras ou Trechos de Texto.","q":8,"ac":4},{"n":"Formação e Estrutura das Palavras","q":7,"ac":4},{"n":"Funções Sintáticas","q":7,"ac":4},{"n":"Denotação e Conotação","q":6,"ac":2},{"n":"Variações da Linguagem: Não Verbal, Regional, Histórica, Contextual. Neologismos e Estrangeirismos","q":6,"ac":3},{"n":"Conjunção","q":5,"ac":5},{"n":"Questões Variadas de Classe de Palavras","q":5,"ac":4},{"n":"Termos Essenciais da Oração","q":5,"ac":3},{"n":"Vozes (Voz Passiva e Voz Ativa)","q":5,"ac":3},{"n":"Fatos da Língua Portuguesa (Porque, Por Que, Porquê e Por Quê; Onde, Aonde e Donde; Há e A, etc)","q":4,"ac":3},{"n":"Artigo","q":4,"ac":2},{"n":"Pronomes","q":4,"ac":2},{"n":"Pronomes Relativos","q":4,"ac":2},{"n":"Preposição","q":4,"ac":2},{"n":"Sujeito","q":4,"ac":3},{"n":"Outras Questões de Português e Questões Mescladas (Interpretação de Textos ou Gramática)","q":4,"ac":3},{"n":"Sinônimos e Antônimos","q":3,"ac":3},{"n":"Significação de Vocábulo e Expressões","q":3,"ac":3},{"n":"Regência","q":3,"ac":2},{"n":"Crase","q":3,"ac":2},{"n":"Concordância (Verbal e Nominal)","q":3,"ac":2},{"n":"Linguagem Formal e Informal","q":3,"ac":2},{"n":"Elementos da Comunicação e Funções da Linguagem","q":3,"ac":2},{"n":"Substantivo","q":2,"ac":2},{"n":"Correlação Verbal","q":2,"ac":2},{"n":"Termos Integrantes (Objeto Direto e Indireto, Complemento Nominal e Agente da Passiva)","q":2,"ac":1},{"n":"Orações Subordinadas Adverbiais","q":2,"ac":2},{"n":"Vícios de Linguagem (Pleonasmo, Ambiguidade, Cacofonia, etc.)","q":2,"ac":1},{"n":"Vocábulo \"Que\"","q":2,"ac":2},{"n":"Questões Mescladas de Ortografia","q":1,"ac":1},{"n":"Questões Variadas de Verbo","q":1,"ac":1},{"n":"Colocação Pronominal","q":1,"ac":1},{"n":"Predicado","q":1,"ac":0},{"n":"Orações Reduzidas","q":1,"ac":1},{"n":"Função Sintática dos Pronomes Pessoais Átonos","q":1,"ac":0},{"n":"Pontuação (Ponto, Vírgula, Travessão, Aspas, Parênteses, etc)","q":1,"ac":1},{"n":"Figuras de Linguagem","q":1,"ac":1},{"n":"Clareza e Correção","q":1,"ac":1}],"pv":6,"qp":6},{"id":"direito-tributario","n":"Noções de Direito Tributário","c":"#A98526","q":262,"ac":183,"er":79,"as":[{"a":"Princípios gerais da tributação (CF)","p":"Média","tq":22,"tac":9,"tn":"Princípios Tributários"},{"a":"Espécies tributárias","p":"Média","tq":17,"tac":8,"tn":"Imunidades Tributárias"},{"a":"Repartição de competências","p":"Média","tq":8,"tac":6,"tn":"Repartição da Competência Tributária (Privativa, Comum, Cumulativa, Residual, Extraordinária e Compartilhada)"},{"a":"Legislação tributária: espécies normativas, hierarquia, vigência e aplicação no tempo","p":"Média","tq":5,"tac":5,"tn":"Vigência e Aplicação da Legislação Tributária (arts. 101 a 106 do CTN)"},{"a":"Administração tributária e fiscalização","p":"Média"},{"a":"Dívida ativa","p":"Média"},{"a":"Certidões negativas","p":"Média"},{"a":"Controle externo da arrecadação tributária pelos Tribunais de Contas","p":"Média"}],"dg":[{"n":"Espécies de Tributos","q":150,"ac":113},{"n":"Limitações Constitucionais ao Poder de Tributar (arts. 150 a 152 da CF)","q":39,"ac":17},{"n":"Impostos (Conceito e Classificações)","q":37,"ac":24},{"n":"Taxas (CF/1988 e CTN)","q":31,"ac":23},{"n":"Competência Tributária (CF/1988 e CTN)","q":28,"ac":19},{"n":"Contribuições de Melhoria (CF/1988 e CTN)","q":24,"ac":19},{"n":"Contribuições Especiais (CF/1988)","q":24,"ac":19},{"n":"Legislação Tributária (arts. 96 a 112 do CTN e art. 146 e 146-A da CF/1988)","q":24,"ac":19},{"n":"Empréstimo Compulsório (CF/1988 e CTN)","q":22,"ac":16},{"n":"Princípios Tributários","q":22,"ac":9},{"n":"Introdução ao Direito Tributário","q":19,"ac":13},{"n":"Imunidades Tributárias","q":17,"ac":8},{"n":"Conceito de Tributo","q":15,"ac":9},{"n":"Competência para Legislar sobre Direito Tributário","q":13,"ac":7},{"n":"Questões Mescladas de Espécies de Tributos","q":12,"ac":12},{"n":"Disposições Gerais da Legislação (arts. 96 a 100 do CTN)","q":12,"ac":9},{"n":"Repartição da Competência Tributária (Privativa, Comum, Cumulativa, Residual, Extraordinária e Compartilhada)","q":8,"ac":6},{"n":"Competência Tributária: Conceitos e Características","q":7,"ac":6},{"n":"Vigência e Aplicação da Legislação Tributária (arts. 101 a 106 do CTN)","q":5,"ac":5},{"n":"Classificação Doutrinária dos Tributos","q":4,"ac":4},{"n":"Interpretação e Integração da Legislação Tributária (arts. 107 a 112 do CTN)","q":4,"ac":3},{"n":"Espécies Normativas Aplicadas ao Direito Tributário (art. 146 e 146-A da CF/1988)","q":3,"ac":2},{"n":"Obrigação Tributária (arts. 113 a 138 do CTN)","q":1,"ac":1},{"n":"Responsabilidade Tributária (arts. 128 a 138 do CTN)","q":1,"ac":1},{"n":"Jurisprudência dos Tribunais Superiores em Matéria Tributária","q":1,"ac":1},{"n":"Jurisprudência dos Tribunais Superiores sobre Contribuições Especiais","q":1,"ac":1}],"pv":2,"qp":2},{"id":"direito-penal","n":"Noções de Direito Penal","c":"#6B4A3A","q":138,"ac":89,"er":49,"as":[{"a":"Crimes contra a Administração Pública praticados por funcionário público","p":"Baixa","tq":82,"tac":57,"tn":"Dos Crimes Praticados por Funcionário Público contra a Administração em Geral (arts. 312 a 327 do CP)"},{"a":"Crimes contra as Finanças Públicas","p":"Baixa","tq":27,"tac":15,"tn":"Dos Crimes contra as Finanças Públicas (arts. 359-A a 359-H do CP)"},{"a":"Crimes contra a fé pública: falsidade documental","p":"Baixa","tq":109,"tac":72,"tn":"Dos Crimes contra a Administração Pública (arts. 312 a 359-H do CP)"}],"dg":[{"n":"Dos Crimes contra a Administração Pública (arts. 312 a 359-H do CP)","q":109,"ac":72},{"n":"Dos Crimes Praticados por Funcionário Público contra a Administração em Geral (arts. 312 a 327 do CP)","q":82,"ac":57},{"n":"Dos Crimes contra as Finanças Públicas (arts. 359-A a 359-H do CP)","q":27,"ac":15},{"n":"Dos Crimes contra a Fé Pública (arts. 289 a 311-A do CP)","q":26,"ac":14},{"n":"Funcionário Público para Fins Penais (art. 327 do CP)","q":26,"ac":19},{"n":"Da Falsidade Documental (arts. 296 a 305 do CP)","q":25,"ac":14},{"n":"Peculato (art. 312 do CP)","q":21,"ac":16},{"n":"Falsificação de Documento Público (art. 297 do CP)","q":15,"ac":11},{"n":"Concussão e Excesso de Exação (art. 316 do CP)","q":10,"ac":7},{"n":"Inserção de Dados Falsos em Sistema de Informações (art. 313-A do CP)","q":9,"ac":4},{"n":"Peculato Mediante Erro de Outrem (art. 313 do CP)","q":6,"ac":5},{"n":"Corrupção Passiva (art. 317 do CP)","q":6,"ac":3},{"n":"Falsificação do Selo ou Sinal Público (art. 296 do CP)","q":4,"ac":1},{"n":"Falsidade Ideológica (art. 299 do CP)","q":4,"ac":0},{"n":"Lei nº 13.869/2019 - Lei de Abuso de Autoridade (antiga Lei nº 4.898/1965)","q":3,"ac":3},{"n":"Falsificação de Documento Particular (art. 298 do CP)","q":2,"ac":2},{"n":"De Outras Falsidades e das Fraudes em Certame de Interesse Público (arts. 306 a 311-A do CP)","q":1,"ac":0},{"n":"Falsa Identidade (arts. 307 a 308 do CP)","q":1,"ac":0},{"n":"Extravio, Sonegação ou Inutilização de Livro ou Documento (art. 314 do CP)","q":1,"ac":0},{"n":"Prevaricação (arts. 319 e 319-A do CP)","q":1,"ac":1},{"n":"Condescendência Criminosa (art. 320 do CP)","q":1,"ac":1},{"n":"Advocacia Administrativa (art. 321 do CP)","q":1,"ac":1}],"pv":2,"qp":2},{"id":"direito-previdenciario","n":"Noções de Direito Previdenciário e Avaliação Atuarial","c":"#5A7D9A","q":75,"ac":31,"er":44,"as":[{"a":"EC nº 20/1998, 41/2003, 47/2005, 70/2012, 88/2015, 103/2019","p":"Média"},{"a":"Leis 9.717/1998, 9.796/1999, 10.887/2004","p":"Média","tq":15,"tac":11,"tn":"Lei nº 9.717/1998 - Regras Gerais dos RPPSs"},{"a":"Tipos de plano: benefício definido, contribuição definida, contribuição variável","p":"Média"},{"a":"Reservas matemáticas","p":"Média"},{"a":"Custo normal e suplementar","p":"Média"},{"a":"Duração do passivo","p":"Média"},{"a":"Apuração de resultado (déficit/superávit)","p":"Média"},{"a":"Equilíbrio financeiro e atuarial","p":"Média"},{"a":"Equacionamento do déficit","p":"Média"},{"a":"DRAA, Nota Técnica Atuarial, fluxos atuariais","p":"Média","tq":3,"tac":0,"tn":"Nota Técnica Atuarial"},{"a":"Regimes financeiros (capitalização, capitais de cobertura, repartição simples)","p":"Média","tq":10,"tac":4,"tn":"Regimes e Métodos Financeiros"}],"dg":[{"n":"Regime Próprio de Previdência Social","q":26,"ac":17},{"n":"Lei nº 9.717/1998 - Regras Gerais dos RPPSs","q":15,"ac":11},{"n":"Demografia, Tábuas e Funções biométricas","q":14,"ac":2},{"n":"Gestão Atuarial e Financeira em Seguros e Previdência","q":14,"ac":7},{"n":"Regimes e Métodos Financeiros","q":10,"ac":4},{"n":"Contabilidade e Avaliação Atuarial","q":9,"ac":2},{"n":"Regime Próprio de Previdência Social na Constituição Federal","q":7,"ac":4},{"n":"Demonstrativo dos Resultados da Avaliação Atuarial (DRAA)","q":6,"ac":2},{"n":"Legislação Previdenciária dos Estados","q":5,"ac":2},{"n":"Legislação Previdenciária do Estado do ES","q":5,"ac":2},{"n":"Lei Complementar Estadual nº 282/2004 - Regime Próprio de Previdência dos Servidores (ES-PREVIDÊNCIA)","q":5,"ac":2},{"n":"Lei nº 10.887/2004 - Aplicação da EC nº 41/2003","q":4,"ac":2},{"n":"Reserva Técnica","q":3,"ac":2},{"n":"Nota Técnica Atuarial","q":3,"ac":0},{"n":"Matemática Financeira aplicada às Ciências Atuariais","q":2,"ac":1},{"n":"Probabilidade e Estatística aplicada às Ciências Atuariais","q":2,"ac":0},{"n":"Dos Benefícios do Regime Geral de Previdência Social","q":1,"ac":0},{"n":"Da Contagem Recíproca de Tempo de Serviço","q":1,"ac":0},{"n":"Riscos e incertezas","q":1,"ac":1},{"n":"Natureza e elementos dos contratos de seguro, previdência saúde e capitalização","q":1,"ac":0},{"n":"Outras questões de Ciências Atuariais","q":1,"ac":0}],"pv":2,"qp":2},{"id":"analise-dados-ia","n":"Noções de Análise de Dados e de IA","c":"#6155A6","q":264,"ac":172,"er":92,"as":[{"a":"Dados estruturados x não estruturados","p":"Baixa","tq":3,"tac":2,"tn":"Dados Estruturados, Não-Estruturados e Semiestruturados"},{"a":"Coleta, tratamento, armazenamento, visualização","p":"Baixa"},{"a":"Dados abertos","p":"Baixa","tq":3,"tac":3,"tn":"Dados Abertos (Conceitos, Princípios, etc.)"},{"a":"Modelagem de bancos de dados relacionais","p":"Baixa","tq":23,"tac":16,"tn":"Bancos de Dados Dimensionais"},{"a":"Técnicas de exploração de padrões","p":"Baixa"},{"a":"Pré-processamento e mineração de dados","p":"Baixa"},{"a":"Segurança da informação: confidencialidade, integridade, disponibilidade, autenticidade","p":"Baixa","tq":1,"tac":1,"tn":"Gestão da Segurança da Informação"},{"a":"Aprendizado de máquina: clustering, classificação, detecção de anomalias","p":"Baixa","tq":55,"tac":26,"tn":"Machine Learning (Aprendizado de Máquina)"},{"a":"Grandes Modelos de Linguagem (LLM) e engenharia de prompt","p":"Baixa"}],"dg":[{"n":"Inteligência Artificial (IA)","q":96,"ac":53},{"n":"Lei nº 13.709/2018 - Lei Geral de Proteção de Dados Pessoais (LGPD)","q":61,"ac":44},{"n":"Machine Learning (Aprendizado de Máquina)","q":55,"ac":26},{"n":"Disposições Preliminares (arts. 1º a 6º da Lei nº 13.709/2018 - LGPD)","q":45,"ac":35},{"n":"Conceitos Gerais de Machine Learning","q":44,"ac":20},{"n":"Projeto e Modelagem de Dados","q":42,"ac":29},{"n":"Conceitos Iniciais e Gerais de Inteligência Artificial","q":26,"ac":20},{"n":"Bancos de Dados Dimensionais","q":23,"ac":16},{"n":"Conceitos e Fases de Projeto e Modelagem de Dados","q":20,"ac":11},{"n":"Modelo Relacional","q":20,"ac":16},{"n":"Conceitos, Princípios e Atributos da Segurança da Informação","q":20,"ac":16},{"n":"Conceitos e Fundamentos de Modelo Relacional","q":17,"ac":13},{"n":"Algoritmos de Machine Learning (Classificação, Regressão e Clusterização)","q":11,"ac":6},{"n":"Fundamentos e Princípios da Ciência de Dados","q":9,"ac":7},{"n":"Data Warehouse e Data Mart","q":9,"ac":7},{"n":"ETL (Extração, Transformação e Carga)","q":8,"ac":7},{"n":"Do Tratamento de Dados Pessoais (arts. 7º a 16 da Lei nº 13.709/2018 - LGPD)","q":7,"ac":6},{"n":"Linguagem SQL","q":6,"ac":2},{"n":"Consultas e Comandos em SQL","q":6,"ac":2},{"n":"Business Intelligence e Analytics","q":5,"ac":3},{"n":"Data Mining (Mineração de Dados): Etapas, Algoritmos e Modelos (KDD, CRISP-DM, etc.)","q":5,"ac":3},{"n":"Treinamento e Avaliação de Modelos","q":5,"ac":3},{"n":"Do Tratamento de Dados Pessoais Sensíveis (arts. 11 a 13 da Lei nº 13.709/2018 - LGPD)","q":5,"ac":4},{"n":"Dados Estruturados, Não-Estruturados e Semiestruturados","q":3,"ac":2},{"n":"Dados Abertos (Conceitos, Princípios, etc.)","q":3,"ac":3},{"n":"Processamento de Linguagem Natural (IA)","q":3,"ac":1},{"n":"Big Data","q":2,"ac":1},{"n":"Conceitos de Big Data","q":2,"ac":1},{"n":"Ferramentas de Business Intelligence e Visualização de Dados (Power BI, Qlik, Tableau, etc.)","q":2,"ac":2},{"n":"Redes Neurais","q":2,"ac":1},{"n":"LLM (Large Language Models)","q":2,"ac":1},{"n":"Tópicos Mesclados de Ciência de Dados","q":2,"ac":2},{"n":"Modelo Entidade-Relacionamento (MER)","q":2,"ac":2},{"n":"Normalização","q":2,"ac":2},{"n":"Recursos e Ferramentas de Segurança da Informação","q":2,"ac":0},{"n":"Controle de Acesso Lógico (Segurança da Informação)","q":2,"ac":0},{"n":"Dos Direitos do Titular (arts. 17 a 22 da Lei nº 13.709/2018 - LGPD)","q":2,"ac":1},{"n":"Do Tratamento de Dados Pessoais pelo Poder Público (arts. 23 a 32 da Lei nº 13.709/2018 - LGPD)","q":2,"ac":1},{"n":"Das Regras para Tratamento de Dados Pessoais (arts. 23 a 30 da Lei nº 13.709/2018 - LGPD)","q":2,"ac":1},{"n":"Da Segurança e das Boas Práticas (arts. 46 a 51 da Lei nº 13.709/2018 - LGPD)","q":2,"ac":1},{"n":"Ciência de Dados - Objetivos e Etapas","q":1,"ac":1},{"n":"Dado, Informação e Conhecimento","q":1,"ac":1},{"n":"Governança e Qualidade de Dados (DAMA-DMBOK e Conceitos Relacionados)","q":1,"ac":0},{"n":"Modelagem Dimensional","q":1,"ac":0},{"n":"Linguagens de Programação para Ciência de Dados","q":1,"ac":1},{"n":"Bibliotecas Python para Ciência de Dados","q":1,"ac":1},{"n":"NLTK (Natural Language Toolkit)","q":1,"ac":1},{"n":"Deep Learning","q":1,"ac":1},{"n":"IA Generativa","q":1,"ac":0},{"n":"Outros Assuntos sobre Inteligência Artificial","q":1,"ac":0},{"n":"Modelagem e Mapeamento ER-relacional","q":1,"ac":1},{"n":"Gestão da Segurança da Informação","q":1,"ac":1},{"n":"Riscos em Segurança da Informação (NBR ISO/IEC 27001, 27002 e 27005)","q":1,"ac":1},{"n":"Conceitos Gerais de Autenticação e Controle de Acesso","q":1,"ac":0},{"n":"Autenticação de Usuários","q":1,"ac":0},{"n":"Autenticação Multifator (MFA)","q":1,"ac":0},{"n":"Algoritmos e Lógica de Programação","q":1,"ac":1},{"n":"Variáveis, Subprogramas e Passagem de Parâmetro","q":1,"ac":1},{"n":"Dos Requisitos para o Tratamento de Dados Pessoais (arts. 7º a 10 da Lei nº 13.709/2018 - LGPD)","q":1,"ac":1},{"n":"Do Término do Tratamento de Dados (arts. 15 a 16 da Lei nº 13.709/2018 - LGPD)","q":1,"ac":1},{"n":"Da Transferência Internacional de Dados (arts. 33 a 36 da Lei nº 13.709/2018 - LGPD)","q":1,"ac":0},{"n":"Da Segurança e do Sigilo de Dados (arts. 46 a 49 da Lei nº 13.709/2018 - LGPD)","q":1,"ac":0},{"n":"Das Boas Práticas e da Governança (arts. 50 a 51 da Lei nº 13.709/2018 - LGPD)","q":1,"ac":1},{"n":"Da Fiscalização (arts. 52 a 54 da Lei nº 13.709/2018 - LGPD)","q":1,"ac":0},{"n":"Das Sanções Administrativas (arts. 52 a 54 da Lei nº 13.709/2018 - LGPD)","q":1,"ac":0},{"n":"Da ANPD e do CNPD (arts. 55-A a 58-B da Lei nº 13.709/2018 - LGPD)","q":1,"ac":0},{"n":"Da ANPD (arts. 55-A a 55-M da Lei nº 13.709/2018 - LGPD)","q":1,"ac":0}],"pv":4,"qp":4},{"id":"estatistica","n":"Estatística","c":"#1F7A8C","q":42,"ac":30,"er":12,"as":[{"a":"População e amostra","p":"Média"},{"a":"Tipos de variáveis","p":"Média"},{"a":"Medidas de tendência central (médias, moda, mediana)","p":"Média"},{"a":"Medidas de dispersão (variância, desvio padrão, CV) e de posição (quartis, decis, percentis)","p":"Média","tq":23,"tac":19,"tn":"Medidas de Posição"},{"a":"Representações gráficas: histogramas, polígonos, dispersão, setores","p":"Média"},{"a":"Probabilidade e distribuições de probabilidade","p":"Média"},{"a":"Correlação, regressão e séries temporais","p":"Média"},{"a":"Intervalo de confiança, testes de hipóteses e técnicas de amostragem","p":"Média","tq":4,"tac":2,"tn":"Intervalo de Confiança para a Média"}],"dg":[{"n":"Estatística Descritiva","q":23,"ac":19},{"n":"Medidas de Posição","q":23,"ac":19},{"n":"Amostragem","q":14,"ac":8},{"n":"Média","q":11,"ac":9},{"n":"Quantis (Mediana, Quartil, Decil, Percentil) e Interpolação Linear da Ogiva","q":9,"ac":8},{"n":"Média para Dados não Agrupados","q":7,"ac":7},{"n":"Amostragem Estratificada","q":6,"ac":2},{"n":"Média Harmônica","q":4,"ac":2},{"n":"Conceitos básicos e definições de Amostragem em Estatística","q":4,"ac":3},{"n":"Intervalos de Confiança","q":4,"ac":2},{"n":"Intervalo de Confiança para a Média","q":4,"ac":2},{"n":"Questões Mescladas de Medidas de Posição","q":3,"ac":2},{"n":"Amostragem Não Probabilística","q":2,"ac":2},{"n":"Amostragem Aleatória Simples","q":2,"ac":1},{"n":"Sem Classificação","q":1,"ac":1}],"pv":3,"qp":3},{"id":"direito-processual-civil","n":"Direito Processual Civil","c":"#6E8B3D","q":40,"ac":26,"er":14,"as":[{"a":"Princípios: devido processo legal, contraditório, ampla defesa, juiz natural","p":"Média"},{"a":"Jurisdição e ação: condições e classificação","p":"Média"},{"a":"Atos judiciais: despachos, decisões interlocutórias, sentenças","p":"Média"},{"a":"Coisa julgada material","p":"Média","tq":2,"tac":2,"tn":"Conflitos no Tempo (Efeitos, Ato Jurídico Perfeito, Direito Adquirido, Coisa Julgada - art. 6º da LINDB)"},{"a":"Controle judicial dos atos administrativos","p":"Média"},{"a":"Processo estrutural, problema estrutural, decisão estrutural","p":"Média"},{"a":"Métodos alternativos de resolução de conflitos","p":"Média"},{"a":"Teoria geral da prova","p":"Média"}],"dg":[{"n":"Da Função Jurisdicional (arts. 16 a 69)","q":19,"ac":10},{"n":"Da Ação (arts. 17 a 20)","q":13,"ac":6},{"n":"Normas Fundamentais e Aplicação das Normas Processuais (arts. 1º a 15 e CF/1988)","q":9,"ac":8},{"n":"Princípios Processuais Civis (arts. 1º a 12 e CF/1988)","q":9,"ac":8},{"n":"Lei de Introdução às Normas do Direito Brasileiro (Decreto-Lei 4.657/42)","q":9,"ac":7},{"n":"Da Jurisdição (art. 16)","q":6,"ac":4},{"n":"Segurança Jurídica e Eficiência na Criação e Aplicação do Direito Público (arts. 20 a 30 da LINDB)","q":4,"ac":3},{"n":"Jurisprudência dos Tribunais Superiores em Matéria Processual Civil","q":2,"ac":1},{"n":"Continuidade e Revogação das Leis (Continuidade, Derrogação, Ab-rogação, Repristinação - art. 2º da LINDB)","q":2,"ac":2},{"n":"Conflitos no Tempo (Efeitos, Ato Jurídico Perfeito, Direito Adquirido, Coisa Julgada - art. 6º da LINDB)","q":2,"ac":2},{"n":"Introdução: Teorias, Histórico, Natureza e Conceito do Processo Civil","q":1,"ac":0},{"n":"Jurisprudência dos Tribunais Superiores sobre Normas Fundamentais e Aplicação das Normas Processuais","q":1,"ac":1},{"n":"Jurisprudência dos Tribunais Superiores sobre Função Jurisdicional","q":1,"ac":0},{"n":"Eficácia das Leis no Espaço (Normas de Direito Internacional Privado - arts. 7º a 19 da LINDB)","q":1,"ac":0}],"pv":3,"qp":3},{"id":"direito-civil","n":"Direito Civil","c":"#9C6B2F","q":4,"ac":0,"er":4,"as":[{"a":"LINDB: princípios de segurança jurídica e proteção da confiança","p":"Média"},{"a":"Efeitos de decisões administrativas e judiciais","p":"Média"},{"a":"Pessoa natural e jurídica","p":"Média"},{"a":"Capacidade civil","p":"Média","tq":4,"tac":0,"tn":"Da Personalidade e da Capacidade (arts. 1º a 10)"},{"a":"Desconsideração da personalidade jurídica","p":"Média"},{"a":"Bens: classificação, bens públicos (uso comum, dominicais, indisponíveis)","p":"Média"},{"a":"Fatos, atos e negócios jurídicos: validade, defeitos, nulidade/anulabilidade, condições/termos/encargos","p":"Média"},{"a":"Prescrição e decadência","p":"Média"},{"a":"Responsabilidade civil","p":"Média"},{"a":"Contratos em geral: formação, validade, interpretação, efeitos, extinção, revisão e resolução","p":"Média"}],"dg":[{"n":"Das Pessoas (arts. 1º a 78)","q":4,"ac":0},{"n":"Das Pessoas Naturais (arts. 1º a 39)","q":4,"ac":0},{"n":"Da Personalidade e da Capacidade (arts. 1º a 10)","q":4,"ac":0}],"pv":3,"qp":3}];
+
+/* ══ FIREBASE ══ */
+const firebaseConfig = {
+  apiKey: "AIzaSyD7a1u5cBTGYKfxMTufPpPuOFy-XCWjX1Y",
+  authDomain: "painel-estudos-tcepe.firebaseapp.com",
+  projectId: "painel-estudos-tcepe",
+  storageBucket: "painel-estudos-tcepe.firebasestorage.app",
+  messagingSenderId: "415211644132",
+  appId: "1:415211644132:web:f8ce4538c8823db00a38f1"
+};
+const fbApp = initializeApp(firebaseConfig);
+const auth = getAuth(fbApp);
+const db = getFirestore(fbApp);
+const DOMINIO_LOGIN = '@paineldeestudos.app';
+try{ await setPersistence(auth, browserLocalPersistence); }catch(e){}
+
+/* ══ LOGIN ══ */
+let uidAtual = null;
+
+function mostrarFormulario(){
+  document.getElementById('loginCarregando').style.display = 'none';
+  document.getElementById('loginCampos').style.display = 'flex';
+  document.getElementById('loginUser').focus();
+}
+function entrar(uid){
+  uidAtual = uid;
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('app').classList.remove('app-oculto');
+  iniciarApp();
+}
+async function tentarLogin(){
+  const btn = document.getElementById('loginBtn');
+  const u = document.getElementById('loginUser').value.trim().toLowerCase();
+  const p = document.getElementById('loginPass').value;
+  const erro = document.getElementById('loginErro');
+  erro.textContent = '';
+  if(!u || !p){ erro.textContent = 'Preencha usuário e senha.'; return; }
+  btn.textContent = 'Entrando…'; btn.disabled = true;
+  try{
+    await signInWithEmailAndPassword(auth, u + DOMINIO_LOGIN, p);
+    // onAuthStateChanged cuida do resto
+  }catch(e){
+    erro.textContent = 'Usuário ou senha incorretos.';
+    document.getElementById('loginPass').value = '';
+    document.getElementById('loginPass').focus();
+    btn.textContent = 'Entrar'; btn.disabled = false;
+  }
+}
+document.getElementById('loginBtn').addEventListener('click', tentarLogin);
+['loginUser','loginPass'].forEach(id => document.getElementById(id).addEventListener('keydown', e=>{
+  if(e.key === 'Enter') tentarLogin();
+}));
+onAuthStateChanged(auth, user=>{
+  if(user){ entrar(user.uid); }
+  else{
+    document.getElementById('login').style.display = 'flex';
+    document.getElementById('app').classList.add('app-oculto');
+    mostrarFormulario();
+    const btn = document.getElementById('loginBtn'); btn.textContent = 'Entrar'; btn.disabled = false;
+  }
+});
+
+/* ══ ARMAZENAMENTO (Firestore, com cache local de reforço) ══ */
+const CHAVE = 'tcepe_painel_v2';
+const Store = {
+  async ler(uid){
+    try{
+      const ref = doc(db, 'estados', uid);
+      const snap = await getDoc(ref);
+      if(snap.exists() && snap.data().dados){
+        const txt = snap.data().dados;
+        try{ localStorage.setItem(CHAVE, txt); }catch(e){}
+        return JSON.parse(txt);
+      }
+    }catch(e){ console.error('Firestore (leitura) falhou, usando cache local', e); }
+    try{ const v = localStorage.getItem(CHAVE); return v ? JSON.parse(v) : null; }catch(e){ return null; }
+  },
+  async gravar(uid, obj){
+    const txt = JSON.stringify(obj);
+    try{ localStorage.setItem(CHAVE, txt); }catch(e){}
+    try{ await setDoc(doc(db, 'estados', uid), {dados: txt, atualizado: Date.now()}); }
+    catch(e){ console.error('Firestore (escrita) falhou — dado ficou salvo só neste navegador', e); }
+  }
+};
+let state = { perfil:{nome:'',banner:'',foto:''}, cores:{}, mat:{}, ass:{}, plano:{} };
+let gravando = null;
+function salvar(){ clearTimeout(gravando); gravando = setTimeout(()=> Store.gravar(uidAtual, state), 350); }
+
+/* ══ AUX ══ */
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let _uid = 0;
+
+function faixa(p){
+  if(p < 70) return {cor:'var(--red)', hex:'#B06A54', nome:'Zona vermelha', fill:'var(--red-fill)', suave:'var(--red-soft)'};
+  if(p < 80) return {cor:'var(--amber)', hex:'#BF9A4E', nome:'Zona amarela', fill:'var(--amber-fill)', suave:'var(--amber-soft)'};
+  return {cor:'var(--green)', hex:'#7E9560', nome:'Zona verde', fill:'var(--green-fill)', suave:'var(--green-soft)'};
+}
+function corDe(m){ return state.cores[m.id] || m.c; }
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast._t); toast._t = setTimeout(()=>t.classList.remove('on'), 2600); }
+
+/* ══ CÁLCULOS ══ */
+function statsMateria(m){
+  const ex = state.mat[m.id] || {q:0,ac:0};
+  let q = m.q + (ex.q||0), ac = m.ac + (ex.ac||0);
+  m.as.forEach((a,i)=>{ const r = state.ass[m.id+'#'+i]; if(r && r.q){ q += r.q; ac += (r.ac||0); } });
+  return {q, ac, er:q-ac, pct: q ? Math.round(100*ac/q) : 0};
+}
+function dominados(m){ let n=0; m.as.forEach((a,i)=>{ const r = state.ass[m.id+'#'+i]; if(r && r.d) n++; }); return n; }
+function erroAjustado(er, q, base, k){ return (er + k*base) / (q + k); }
+
+let CACHE = null;
+function calcular(){
+  const st = {};
+  let qpMax = 1;
+  DADOS.forEach(m => { st[m.id] = statsMateria(m); qpMax = Math.max(qpMax, m.qp); });
+  const inc = {}; DADOS.forEach(m => { inc[m.id] = m.qp / qpMax; });
+
+  const qTot = DADOS.reduce((s,m)=> s+st[m.id].q, 0);
+  const erTot = DADOS.reduce((s,m)=> s+st[m.id].er, 0);
+  const erroGeral = qTot ? erTot/qTot : 0.3;
+
+  const brutoMat = {}, errMat = {};
+  DADOS.forEach(m => {
+    const err = erroAjustado(st[m.id].er, st[m.id].q, erroGeral, 40);
+    errMat[m.id] = err;
+    brutoMat[m.id] = inc[m.id]*err*err;
+  });
+  const maxMat = Math.max(...Object.values(brutoMat), 1e-9);
+  const prioMat = {}; DADOS.forEach(m => { prioMat[m.id] = Math.round(100*brutoMat[m.id]/maxMat); });
+
+  const lista = [];
+  DADOS.forEach(m => {
+    const incN = inc[m.id];
+    m.as.forEach((a,i)=>{
+      const chave = m.id+'#'+i, r = state.ass[chave] || {};
+      let err, pct = null, origem = null;
+      if(r.q){ err = erroAjustado(r.q-(r.ac||0), r.q, errMat[m.id], 8); pct = Math.round(100*(r.ac||0)/r.q); origem='meu'; }
+      else if(a.tq){ err = erroAjustado(a.tq-a.tac, a.tq, errMat[m.id], 8); pct = Math.round(100*a.tac/a.tq); origem='tec'; }
+      else { err = errMat[m.id]; }
+      const bruto = (0.4 + 0.6*incN) * err * err;
+      lista.push({mat:m, idx:i, assunto:a.a, peso:a.p, chave, dominado:!!r.d, bruto, reg:r, pct, origem,
+                  tec: a.tq ? {n:a.tn, q:a.tq, ac:a.tac} : null});
+    });
+  });
+  const maxAss = Math.max(...lista.map(x=>x.bruto), 1e-9);
+  lista.forEach(x => { x.score = Math.round(100*x.bruto/maxAss); });
+
+  const tq = qTot, tac = DADOS.reduce((s,m)=> s+st[m.id].ac, 0);
+  CACHE = {st, prioMat, assuntos:lista, geral:{q:tq, ac:tac, er:tq-tac, pct: tq ? Math.round(100*tac/tq) : 0}};
+  return CACHE;
+}
+function nivel(s){ return s >= 55 ? 'alta' : s >= 25 ? 'media' : 'baixa'; }
+function nivelNome(s){ return s >= 55 ? 'Alta' : s >= 25 ? 'Média' : 'Baixa'; }
+function corNivel(s){ return nivel(s)==='alta' ? 'var(--red)' : nivel(s)==='media' ? '#9A7A32' : 'var(--green)'; }
+
+/* ══ DESENHOS ══ */
+function termometro(pct, alt){
+  const H = alt || 200, topo = 16, base = H - 44, larg = 20, cx = 28;
+  const f = faixa(pct), h = (pct/100)*(base-topo);
+  const marca = v => { const y = base - (v/100)*(base-topo);
+    return `<line x1="${cx-larg/2-3}" y1="${y}" x2="${cx+larg/2+15}" y2="${y}" stroke="var(--ink-3)" stroke-width="1" stroke-dasharray="2 2" opacity=".7"/>
+            <text x="${cx+larg/2+18}" y="${y+3.5}" font-family="var(--mono)" font-size="9" fill="var(--ink-2)" font-weight="600">${v}</text>`; };
+  let ticks = '';
+  for(let v=0; v<=100; v+=10){ if(v===70||v===80) continue; const y = base-(v/100)*(base-topo);
+    ticks += `<line x1="${cx+larg/2}" y1="${y}" x2="${cx+larg/2+(v%20?4:6)}" y2="${y}" stroke="var(--rule)" stroke-width="1"/>`; }
+  const cid = 'tc'+(++_uid);
+  return `<svg width="82" height="${H}" viewBox="0 0 82 ${H}" role="img" aria-label="Termômetro em ${pct}">
+    <rect x="${cx-larg/2-1}" y="${topo-1}" width="${larg+2}" height="${base-topo+24}" rx="${larg/2+1}" fill="#FBF6EA" stroke="var(--rule)"/>
+    <circle cx="${cx}" cy="${base+20}" r="16" fill="#FBF6EA" stroke="var(--rule)"/>
+    <clipPath id="${cid}"><rect x="${cx-larg/2}" y="${topo}" width="${larg}" height="${base-topo+22}" rx="${larg/2}"/></clipPath>
+    <g clip-path="url(#${cid})"><rect x="${cx-larg/2}" y="${base-h}" width="${larg}" height="${h+30}" fill="${f.cor}"/></g>
+    <circle cx="${cx}" cy="${base+20}" r="12.5" fill="${f.cor}"/>
+    ${ticks}${marca(70)}${marca(80)}
+    <rect x="${cx-larg/2+3}" y="${topo+3}" width="4" height="${base-topo+8}" rx="2" fill="#fff" opacity=".3"/>
+  </svg>`;
+}
+/* círculo PREENCHIDO (líquido) com o número DENTRO */
+function circulo(pct, tam){
+  const T = tam || 66, r = T/2 - 2, cx = T/2, cy = T/2;
+  const f = faixa(pct);
+  const h = (pct/100) * (2*r), yTop = cy + r - h;
+  const cid = 'cc'+(++_uid);
+  return `<svg width="${T}" height="${T}" viewBox="0 0 ${T} ${T}" role="img" aria-label="${pct} de 100">
+    <defs><clipPath id="${cid}"><circle cx="${cx}" cy="${cy}" r="${r}"/></clipPath></defs>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="${f.fill}"/>
+    <rect x="0" y="${yTop}" width="${T}" height="${h+2}" fill="${f.cor}" clip-path="url(#${cid})"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${f.cor}" stroke-width="1.5" opacity=".55"/>
+    <text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central"
+      font-family="var(--serif)" font-size="${(T*0.36).toFixed(1)}" font-weight="700"
+      fill="#3E2C18" paint-order="stroke" stroke="rgba(246,239,223,.6)" stroke-width="${(T*0.045).toFixed(1)}">${pct}</text>
+  </svg>`;
+}
+
+/* ══ NAVEGAÇÃO ══ */
+let vistaAtual = 'inicio', matAtual = null, filtroAssunto = 'prioridade', diagAberto = false;
+function irPara(v, id){
+  vistaAtual = v;
+  document.querySelectorAll('.vista').forEach(s => s.classList.remove('on'));
+  $('#vista-'+v).classList.add('on');
+  document.querySelectorAll('.nav-btn[data-vista]').forEach(b =>
+    b.classList.toggle('on', b.dataset.vista === v || (v==='materia' && b.dataset.vista==='materias')));
+  $('#btnVoltar').style.display = v === 'materia' ? 'block' : 'none';
+  if(v === 'materia'){ matAtual = id; diagAberto = false; renderMateria(); }
+  if(v === 'calendario') renderCalendario();
+  if(v === 'inicio') renderInicio();
+  if(v === 'materias') renderMaterias(document.querySelector('#filtrosMat .on').dataset.ord);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ══ INÍCIO ══ */
+function renderInicio(){
+  const c = calcular(), g = c.geral, f = faixa(g.pct);
+  $('#termoGeral').innerHTML = termometro(g.pct);
+  const ng = $('#numGeral'); ng.textContent = g.pct; ng.style.color = f.cor;
+  const fx = $('#faixaGeral'); fx.textContent = f.nome; fx.style.background = f.suave; fx.style.color = f.cor;
+  $('#linhasGeral').innerHTML =
+    `<div><span>Questões resolvidas</span><b>${g.q.toLocaleString('pt-BR')}</b></div>
+     <div><span>Acertos</span><b>${g.ac.toLocaleString('pt-BR')}</b></div>
+     <div><span>Erros</span><b>${g.er.toLocaleString('pt-BR')}</b></div>
+     <div><span>Assuntos dominados</span><b>${DADOS.reduce((s,m)=>s+dominados(m),0)} de ${DADOS.reduce((s,m)=>s+m.as.length,0)}</b></div>`;
+
+  const porMat = {};
+  const alvos = c.assuntos.filter(a => !a.dominado).sort((a,b)=> b.score-a.score)
+    .filter(a => { porMat[a.mat.id] = (porMat[a.mat.id]||0)+1; return porMat[a.mat.id] <= 2; }).slice(0,6);
+  $('#alvoLista').innerHTML = alvos.map((a,i)=>`
+    <button class="alvo-item" data-mat="${a.mat.id}">
+      <span class="alvo-rank">${i+1}</span>
+      <span class="alvo-txt">
+        <span class="alvo-assunto">${esc(a.assunto)}</span>
+        <span class="alvo-mat"><i class="ponto" style="background:${corDe(a.mat)}"></i>${esc(a.mat.n)} · ${a.mat.qp}q na prova</span>
+      </span>
+      <span class="alvo-score" style="color:${corNivel(a.score)}">${a.score}</span>
+    </button>`).join('');
+
+  const ord = [...DADOS].sort((a,b)=> c.prioMat[b.id]-c.prioMat[a.id]);
+  $('#circulos').innerHTML = ord.map(m=>{ const s = c.st[m.id];
+    return `<button class="circ" data-mat="${m.id}" title="${esc(m.n)} — ${s.pct}">
+      ${circulo(s.pct, 66)}<span class="circ-nome">${esc(m.n)}</span></button>`; }).join('');
+
+  $('#rankMaterias').innerHTML = ord.map(m=>{ const s = c.st[m.id], p = c.prioMat[m.id];
+    return `<button class="rank-linha" data-mat="${m.id}">
+      <span class="rank-nome"><i class="ponto" style="background:${corDe(m)}"></i><span>${esc(m.n)}</span></span>
+      <span class="rank-barra"><i style="width:${p}%; background:${corDe(m)}"></i></span>
+      <span class="rank-meta"><span style="color:${faixa(s.pct).cor}; font-weight:600">${s.pct}</span>
+        <span class="tag ${nivel(p)}">${nivelNome(p)}</span></span></button>`; }).join('');
+
+  $('#rodapeQ').textContent = `${g.q.toLocaleString('pt-BR')} questões · 80 na prova · ${DADOS.length} matérias · ${DADOS.reduce((s,m)=>s+m.as.length,0)} assuntos`;
+}
+
+/* ══ MATÉRIAS ══ */
+function renderMaterias(ordem){
+  const c = calcular();
+  let lista = [...DADOS];
+  if(ordem === 'pior') lista.sort((a,b)=> c.st[a.id].pct - c.st[b.id].pct);
+  else if(ordem === 'alfabetica') lista.sort((a,b)=> a.n.localeCompare(b.n,'pt-BR'));
+  else lista.sort((a,b)=> c.prioMat[b.id] - c.prioMat[a.id]);
+  $('#matGrade').innerHTML = lista.map(m=>{ const s = c.st[m.id], p = c.prioMat[m.id], dom = dominados(m);
+    return `<button class="mat-card" data-mat="${m.id}" style="--mat:${corDe(m)}">
+      <div class="mat-card-topo"><h3>${esc(m.n)}</h3>${circulo(s.pct, 50)}</div>
+      <div class="mat-card-meta"><span style="color:${faixa(s.pct).cor}; font-weight:600">${s.pct} de 100</span><span>${dom}/${m.as.length} dominados</span></div>
+      <div class="mat-card-barra"><i style="width:${p}%; background:${corDe(m)}"></i></div>
+      <div class="mat-card-meta" style="margin-top:.45rem"><span class="tag ${nivel(p)}">Prioridade ${nivelNome(p).toLowerCase()}</span><span>${m.qp} questões na prova</span></div>
+    </button>`; }).join('');
+}
+
+/* ══ DETALHE DA MATÉRIA ══ */
+function renderMateria(){
+  const m = DADOS.find(x => x.id === matAtual); if(!m) return;
+  const c = calcular(), s = c.st[m.id], p = c.prioMat[m.id], cor = corDe(m), dom = dominados(m);
+  $('#matHero').style.setProperty('--mat', cor);
+  $('#matHero').innerHTML = `
+    <label class="cor-troca" title="Trocar a cor desta matéria"><input type="color" id="inputCor" value="${cor}"></label>
+    <div class="mat-hero-in">
+      <div style="filter:drop-shadow(0 1px 2px rgba(0,0,0,.15))">${termometro(s.pct, 158)}</div>
+      <div style="flex:1 1 240px; min-width:0">
+        <h2>${esc(m.n)}</h2>
+        <div class="sub">Prioridade ${nivelNome(p).toLowerCase()} · ${m.qp} questões na prova</div>
+        <div class="mat-hero-stats">
+          <div><b>${s.pct}</b>de 100</div>
+          <div><b>${s.q.toLocaleString('pt-BR')}</b>questões</div>
+          <div><b>${s.er.toLocaleString('pt-BR')}</b>erros</div>
+          <div><b>${dom}/${m.as.length}</b>dominados</div>
+        </div>
+        <div class="registro" style="margin-top:1rem">
+          <div class="campo"><label style="color:rgba(246,239,223,.8)">Questões</label><input type="number" min="0" id="mq" placeholder="0"></div>
+          <div class="campo"><label style="color:rgba(246,239,223,.8)">Acertos</label><input type="number" min="0" id="mac" placeholder="0"></div>
+          <button class="btn" id="btnRegMat" style="background:var(--card); color:${cor}; border-color:var(--card)">Registrar sessão</button>
+        </div>
+      </div>
+    </div>`;
+  $('#inputCor').addEventListener('input', e=>{ state.cores[m.id] = e.target.value; salvar(); renderMateria(); });
+  $('#btnRegMat').addEventListener('click', ()=>{
+    const q = parseInt($('#mq').value||0,10), ac = parseInt($('#mac').value||0,10);
+    if(!q || q<0){ toast('Informe quantas questões você resolveu.'); return; }
+    if(ac>q){ toast('Os acertos não podem passar do total.'); return; }
+    state.mat[m.id] = state.mat[m.id] || {q:0,ac:0}; state.mat[m.id].q += q; state.mat[m.id].ac += ac;
+    salvar(); renderMateria(); toast(`${q} questões registradas em ${m.n}.`);
+  });
+
+  $('#matTituloAssuntos').textContent = `${m.as.length} assuntos de ${m.n}`;
+  let itens = c.assuntos.filter(a => a.mat.id === m.id);
+  if(filtroAssunto === 'pendentes') itens = itens.filter(a => !a.dominado);
+  else if(filtroAssunto === 'dominados') itens = itens.filter(a => a.dominado);
+  if(filtroAssunto === 'prioridade') itens.sort((a,b)=> (a.dominado-b.dominado) || (b.score-a.score));
+  else itens.sort((a,b)=> a.idx-b.idx);
+
+  $('#listaAssuntos').innerHTML = itens.length ? itens.map(a=>{ const r = a.reg||{};
+    return `<div class="assunto ${a.dominado?'dominado':''}" data-chave="${a.chave}" style="--mat:${cor}">
+      <div class="assunto-cab">
+        <button class="check" data-acao="dominar" aria-label="Marcar como dominado">${a.dominado?'✓':''}</button>
+        <button class="assunto-txt" data-acao="abrir">
+          <span class="assunto-nome">${esc(a.assunto)}</span>
+          <span class="assunto-sub">
+            <span class="tag ${nivel(a.score)}">${a.dominado ? 'Dominado' : nivelNome(a.score)}</span>
+            <span>edital: ${a.peso.toLowerCase()}</span>
+            ${r.q ? `<span>${r.ac||0}/${r.q} questões suas</span>` : (a.tec ? `<span title="${esc(a.tec.n)}">TEC ${a.tec.ac}/${a.tec.q}</span>` : '<span>sem questões ainda</span>')}
+            ${r.nota ? '<span>✎ anotação</span>' : ''}
+          </span>
+        </button>
+        <span class="assunto-dir">
+          ${a.pct !== null ? `<span class="mini-num" style="color:${faixa(a.pct).cor}; ${a.origem==='tec'?'opacity:.6':''}">${a.pct}</span>` : `<span class="mini-num" style="color:var(--ink-3)">—</span>`}
+          <button class="expandir" data-acao="abrir">registrar ▾</button>
+        </span>
+      </div>
+      <div class="assunto-corpo">
+        <div class="registro">
+          <div class="campo"><label>Questões</label><input type="number" min="0" data-campo="q" placeholder="0"></div>
+          <div class="campo"><label>Acertos</label><input type="number" min="0" data-campo="ac" placeholder="0"></div>
+          <button class="btn" data-acao="registrar">Somar</button>
+          ${r.q ? `<button class="btn vazado" data-acao="zerar">Limpar (${r.ac||0}/${r.q})</button>` : ''}
+        </div>
+        ${a.tec ? `<div class="nota-rotulo" style="margin-bottom:.6rem; text-transform:none; letter-spacing:.02em; font-size:11px; color:var(--ink-2)">Referência do TEC: ${esc(a.tec.n)} — ${a.tec.ac} de ${a.tec.q} (${Math.round(100*a.tec.ac/a.tec.q)})</div>` : ''}
+        <div class="nota-rotulo">Pontos que ainda travam</div>
+        <textarea class="nota" data-campo="nota" placeholder="Ex.: confundir competência do TCE com a do TCU; decorar prazos do art. 71…">${esc(r.nota||'')}</textarea>
+      </div>
+    </div>`; }).join('') : `<div class="vazio"><b>Nada por aqui</b>Troque o filtro para ver os outros assuntos.</div>`;
+
+  const qMax = Math.max(...m.dg.map(t=>t.q), 1);
+  const baseErr = s.q ? s.er/s.q : 0.3;
+  const diag = m.dg.map(t=>{ const pct = t.q ? Math.round(100*t.ac/t.q) : 0;
+    const err = (t.q - t.ac + 8*baseErr)/(t.q + 8);
+    return {...t, pct, score: (t.q/qMax)*err*err}; }).sort((a,b)=> b.score-a.score);
+  const mostrar = diagAberto ? diag : diag.slice(0,10);
+  $('#diagTabela').innerHTML = mostrar.map(t=>`
+    <div class="diag-linha">
+      <span class="diag-nome">${esc(t.n)}<br><span class="diag-q">${t.q} questões · ${t.q-t.ac} erros</span></span>
+      <span class="diag-barra"><i style="width:${t.pct}%; background:${faixa(t.pct).cor}"></i></span>
+      <span class="diag-num" style="color:${faixa(t.pct).cor}">${t.pct}</span>
+    </div>`).join('');
+  $('#btnMaisDiag').style.display = diag.length > 10 ? 'inline-block' : 'none';
+  $('#btnMaisDiag').textContent = diagAberto ? 'Mostrar só os 10 mais críticos' : `Ver todos os ${diag.length} tópicos`;
+  document.querySelectorAll('#filtrosAssunto .filtro').forEach(b => b.classList.toggle('on', b.dataset.f === filtroAssunto));
+}
+
+/* ══ CALENDÁRIO ══ */
+const TIPOS = {
+  plan:  {nome:'Planejei', cor:'var(--brand)', cls:'pt-plan'},
+  feito: {nome:'Estudei',  cor:'var(--green)', cls:'pt-feito'},
+  rev:   {nome:'Revisar',  cor:'var(--amber)', cls:'pt-rev'},
+  prox:  {nome:'Próximo',  cor:'#7C93A8',      cls:'pt-prox'},
+};
+let calAno, calMes, diaSel = null, tipoSel = 'plan';
+const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+function chaveDia(a,m,d){ return `${a}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+function hojeChave(){ const h = new Date(); return chaveDia(h.getFullYear(), h.getMonth(), h.getDate()); }
+
+function renderCalendario(){
+  if(calAno == null){ const h = new Date(); calAno = h.getFullYear(); calMes = h.getMonth(); }
+  $('#calMes').textContent = `${MESES[calMes]} de ${calAno}`;
+  const primeiro = new Date(calAno, calMes, 1).getDay();
+  const diasNoMes = new Date(calAno, calMes+1, 0).getDate();
+  const diasMesAnt = new Date(calAno, calMes, 0).getDate();
+  const dow = ['dom','seg','ter','qua','qui','sex','sáb'];
+  let html = dow.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+  const hk = hojeChave();
+  const cel = (num, chave, fora)=>{
+    const regs = state.plano[chave] || [];
+    const tiposPresentes = [...new Set(regs.map(r=>r.t))];
+    const pontos = tiposPresentes.map(t=>`<i class="cal-pt ${TIPOS[t].cls}"></i>`).join('');
+    return `<button class="cal-dia ${fora?'fora':''} ${chave===hk?'hoje':''} ${chave===diaSel?'sel':''}" data-dia="${chave}" ${fora?'tabindex="-1"':''}>
+      <span class="cal-num">${num}</span>
+      ${regs.length ? `<span class="cal-cont">${regs.length}</span>` : ''}
+      <span class="cal-pontos">${pontos}</span>
+    </button>`;
+  };
+  for(let i = primeiro-1; i >= 0; i--){ const num = diasMesAnt-i; const md = calMes===0?11:calMes-1; const ma = calMes===0?calAno-1:calAno; html += cel(num, chaveDia(ma,md,num), true); }
+  for(let d = 1; d <= diasNoMes; d++){ html += cel(d, chaveDia(calAno,calMes,d), false); }
+  const total = primeiro + diasNoMes; const resto = (7 - total%7)%7;
+  for(let d = 1; d <= resto; d++){ const md = calMes===11?0:calMes+1; const ma = calMes===11?calAno+1:calAno; html += cel(d, chaveDia(ma,md,d), true); }
+  $('#calGrade').innerHTML = html;
+
+  // resumo do mês
+  let cont = {plan:0, feito:0, rev:0, prox:0}, diasCom = new Set();
+  Object.keys(state.plano).forEach(k=>{
+    if(k.startsWith(`${calAno}-${String(calMes+1).padStart(2,'0')}`)){
+      (state.plano[k]||[]).forEach(r=> cont[r.t] = (cont[r.t]||0)+1);
+      if((state.plano[k]||[]).length) diasCom.add(k);
+    }
+  });
+  $('#calResumo').innerHTML = `
+    <div class="cal-stat"><b>${diasCom.size}</b><span>dias com registro</span></div>
+    <div class="cal-stat"><b style="color:var(--green)">${cont.feito}</b><span>estudados</span></div>
+    <div class="cal-stat"><b style="color:var(--brand)">${cont.plan}</b><span>planejados</span></div>
+    <div class="cal-stat"><b style="color:var(--amber)">${cont.rev}</b><span>a revisar</span></div>`;
+
+  renderDiaPainel();
+}
+
+function renderDiaPainel(){
+  const p = $('#diaPainel');
+  if(!diaSel){ p.innerHTML = `<div class="vazio"><b>Escolha um dia</b>Clique numa data acima para planejar e registrar seus estudos.</div>`; return; }
+  const [a,m,d] = diaSel.split('-').map(Number);
+  const dataObj = new Date(a, m-1, d);
+  const dow = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+  const regs = state.plano[diaSel] || [];
+  const opcoesMat = DADOS.map(x=>`<option value="${x.id}">${esc(x.n)}</option>`).join('');
+  p.innerHTML = `
+    <div class="dia-cab">
+      <div class="dia-titulo">${dow[dataObj.getDay()]}, ${d} de ${MESES[m-1]}</div>
+      <span style="font-family:var(--mono); font-size:11px; color:var(--ink-3)">${regs.length} registro${regs.length===1?'':'s'}</span>
+    </div>
+    <div class="dia-forma">
+      <div class="tipo-linha">
+        ${Object.entries(TIPOS).map(([k,v])=>`<button class="tipo-btn t-${k} ${k===tipoSel?'on':''}" data-tipo="${k}"><i class="pt" style="background:${v.cor}"></i>${v.nome}</button>`).join('')}
+      </div>
+      <div class="dia-inputs">
+        <select id="diaMat"><option value="">Matéria (opcional)</option>${opcoesMat}</select>
+        <input type="text" id="diaTxt" placeholder="Ex.: LRF arts. 1º a 10 · resolver 20 questões · revisar mapa mental…">
+        <button class="btn" id="diaAdd">Adicionar</button>
+      </div>
+    </div>
+    <div class="reg-lista">
+      ${regs.length ? regs.map((r,i)=>{ const t = TIPOS[r.t]; const mat = DADOS.find(x=>x.id===r.m);
+        return `<div class="reg-item">
+          <span class="reg-barra" style="background:${t.cor}"></span>
+          <span class="reg-txt">
+            <span class="reg-tipo" style="color:${t.cor}">${t.nome}</span>
+            <span class="reg-conteudo">${esc(r.x)}</span>
+            ${mat ? `<span class="reg-mat">${esc(mat.n)}</span>` : ''}
+          </span>
+          <button class="reg-x" data-del="${i}" aria-label="Remover">×</button>
+        </div>`; }).join('') : `<div class="vazio" style="padding:1.4rem"><b>Dia livre</b>Adicione o que pretende estudar, o que estudou ou o que revisar.</div>`}
+    </div>`;
+}
+
+/* ══ EVENTOS ══ */
+document.addEventListener('click', e=>{
+  const nav = e.target.closest('.nav-btn[data-vista]');
+  if(nav){ irPara(nav.dataset.vista); return; }
+  if(e.target.closest('#btnVoltar')){ irPara('materias'); return; }
+  if(e.target.closest('#btnSair')){ signOut(auth); return; }
+
+  const abre = e.target.closest('[data-mat]');
+  if(abre && !e.target.closest('.mat-hero')){ irPara('materia', abre.dataset.mat); return; }
+
+  const fm = e.target.closest('#filtrosMat .filtro');
+  if(fm){ document.querySelectorAll('#filtrosMat .filtro').forEach(b=>b.classList.remove('on')); fm.classList.add('on'); renderMaterias(fm.dataset.ord); return; }
+  const fa = e.target.closest('#filtrosAssunto .filtro');
+  if(fa){ filtroAssunto = fa.dataset.f; renderMateria(); return; }
+  if(e.target.closest('#btnMaisDiag')){ diagAberto = !diagAberto; renderMateria(); return; }
+
+  /* calendário */
+  if(e.target.closest('#calAnt')){ calMes--; if(calMes<0){ calMes=11; calAno--; } renderCalendario(); return; }
+  if(e.target.closest('#calProx')){ calMes++; if(calMes>11){ calMes=0; calAno++; } renderCalendario(); return; }
+  if(e.target.closest('#calHoje')){ const h=new Date(); calAno=h.getFullYear(); calMes=h.getMonth(); diaSel=hojeChave(); renderCalendario(); return; }
+  const dia = e.target.closest('.cal-dia:not(.fora)');
+  if(dia){ diaSel = dia.dataset.dia; renderCalendario(); const dp=$("#diaPainel"); if(dp && dp.scrollIntoView) dp.scrollIntoView({behavior:"smooth",block:"nearest"}); return; }
+  const tp = e.target.closest('.tipo-btn');
+  if(tp){ tipoSel = tp.dataset.tipo; document.querySelectorAll('.tipo-btn').forEach(b=>b.classList.remove('on')); tp.classList.add('on'); return; }
+  if(e.target.closest('#diaAdd')){
+    const txt = $('#diaTxt').value.trim(); if(!txt){ toast('Escreva o que planeja ou estudou.'); return; }
+    const mat = $('#diaMat').value;
+    state.plano[diaSel] = state.plano[diaSel] || [];
+    state.plano[diaSel].push({t:tipoSel, m:mat, x:txt});
+    salvar(); renderCalendario(); toast('Registro adicionado.'); return;
+  }
+  const del = e.target.closest('[data-del]');
+  if(del){ const i = +del.dataset.del; (state.plano[diaSel]||[]).splice(i,1); if(!state.plano[diaSel].length) delete state.plano[diaSel]; salvar(); renderCalendario(); return; }
+
+  /* assuntos */
+  const item = e.target.closest('.assunto');
+  if(item){
+    const acao = e.target.closest('[data-acao]'); if(!acao) return;
+    const chave = item.dataset.chave; state.ass[chave] = state.ass[chave] || {}; const r = state.ass[chave];
+    if(acao.dataset.acao === 'dominar'){ r.d = !r.d; salvar(); renderMateria(); toast(r.d?'Assunto dominado.':'Assunto voltou para a fila.'); }
+    else if(acao.dataset.acao === 'abrir'){ item.classList.toggle('aberto'); }
+    else if(acao.dataset.acao === 'registrar'){
+      const q = parseInt(item.querySelector('[data-campo="q"]').value||0,10);
+      const ac = parseInt(item.querySelector('[data-campo="ac"]').value||0,10);
+      if(!q){ toast('Informe quantas questões você resolveu.'); return; }
+      if(ac>q){ toast('Os acertos não podem passar do total.'); return; }
+      r.q = (r.q||0)+q; r.ac = (r.ac||0)+ac; salvar(); renderMateria(); toast(`${q} questões somadas.`);
+    }
+    else if(acao.dataset.acao === 'zerar'){ r.q=0; r.ac=0; salvar(); renderMateria(); toast('Questões apagadas.'); }
+  }
+});
+document.addEventListener('keydown', e=>{
+  if(e.key==='Enter' && e.target.id==='diaTxt'){ e.preventDefault(); $('#diaAdd').click(); }
+});
+document.addEventListener('input', e=>{
+  if(e.target.matches('[data-campo="nota"]')){
+    const chave = e.target.closest('.assunto').dataset.chave;
+    state.ass[chave] = state.ass[chave] || {}; state.ass[chave].nota = e.target.value; salvar();
+  }
+});
+$('#campoNome').addEventListener('input', e=>{ state.perfil.nome = e.target.value; salvar(); });
+
+/* ══ IMAGENS ══ */
+let alvoImg = null;
+function pedirImagem(t){ alvoImg = t; $('#inputImg').value=''; $('#inputImg').click(); }
+$('#btnBanner').addEventListener('click', ()=> pedirImagem('banner'));
+$('#btnFoto').addEventListener('click', ()=> pedirImagem('foto'));
+$('#inputImg').addEventListener('change', e=>{
+  const arq = e.target.files[0]; if(!arq) return;
+  const leitor = new FileReader();
+  leitor.onload = ev=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const maxL = alvoImg==='banner'?1400:400, maxA = alvoImg==='banner'?360:400;
+      let l = img.width, a = img.height; const f = Math.min(maxL/l, maxA/a, 1);
+      l = Math.round(l*f); a = Math.round(a*f);
+      const cv = document.createElement('canvas'); cv.width=l; cv.height=a;
+      cv.getContext('2d').drawImage(img,0,0,l,a);
+      state.perfil[alvoImg] = cv.toDataURL('image/jpeg', 0.82); salvar(); aplicarPerfil();
+      toast(alvoImg==='banner'?'Cabeçalho atualizado.':'Foto atualizada.');
+    };
+    img.onerror = ()=> toast('Não consegui ler essa imagem. Tente JPG ou PNG.');
+    img.src = ev.target.result;
+  };
+  leitor.readAsDataURL(arq);
+});
+function aplicarPerfil(){
+  const p = state.perfil;
+  $('#campoNome').value = p.nome || '';
+  const b = $('#banner');
+  if(p.banner){ b.style.backgroundImage = `url(${p.banner})`; $('#bannerVazio').style.display='none'; }
+  else { b.style.backgroundImage=''; $('#bannerVazio').style.display='flex'; }
+  const f = $('#foto');
+  if(p.foto){ f.outerHTML = `<img class="foto" id="foto" src="${p.foto}" alt="Foto de perfil">`; }
+  else { const ini = (p.nome||'').trim().split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase() || '—'; f.outerHTML = `<div class="foto foto-vazia" id="foto">${esc(ini)}</div>`; }
+}
+
+/* ══ AJUSTES ══ */
+function baixar(nome, conteudo, tipo){
+  const blob = new Blob([conteudo], {type:tipo}), url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = nome; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url), 1500);
+}
+$('#btnExportar').addEventListener('click', ()=>{ baixar('painel-tcepe-backup.json', JSON.stringify(state), 'application/json'); toast('Backup baixado.'); });
+$('#btnImportar').addEventListener('click', ()=> $('#inputJson').click());
+$('#inputJson').addEventListener('change', e=>{
+  const arq = e.target.files[0]; if(!arq) return;
+  const l = new FileReader();
+  l.onload = ev=>{ try{
+    const novo = JSON.parse(ev.target.result);
+    state = Object.assign({perfil:{},cores:{},mat:{},ass:{},plano:{}}, novo);
+    if(!state.plano) state.plano = {};
+    salvar(); aplicarPerfil(); irPara('inicio'); toast('Backup restaurado.');
+  }catch(err){ toast('Arquivo inválido. Use um backup gerado aqui.'); } };
+  l.readAsText(arq);
+});
+$('#btnCsv').addEventListener('click', ()=>{
+  const c = calcular();
+  const linhas = ['Matéria;Questões na prova;Prioridade;Assunto;Situação;Questões;Acertos;Anotações'];
+  c.assuntos.sort((a,b)=> a.mat.n.localeCompare(b.mat.n,'pt-BR') || a.idx-b.idx).forEach(a=>{
+    const r = a.reg||{}, lp = s => '"'+String(s||'').replace(/"/g,'""')+'"';
+    linhas.push([lp(a.mat.n), a.mat.qp, nivelNome(a.score), lp(a.assunto), a.dominado?'Dominado':'Pendente', r.q||0, r.ac||0, lp(r.nota||'')].join(';'));
+  });
+  baixar('painel-tcepe-assuntos.csv', '\uFEFF'+linhas.join('\n'), 'text/csv;charset=utf-8'); toast('CSV baixado.');
+});
+$('#btnLimparQ').addEventListener('click', ()=>{
+  if(!confirm('Apagar todas as questões registradas aqui? O desempenho do TEC continua como base.')) return;
+  state.mat = {}; Object.values(state.ass).forEach(r=>{ r.q=0; r.ac=0; }); salvar(); irPara('inicio'); toast('Questões apagadas.');
+});
+$('#btnZerar').addEventListener('click', ()=>{
+  if(!confirm('Apagar tudo — dominados, anotações, questões, calendário, cores, nome e imagens?')) return;
+  state = {perfil:{nome:'',banner:'',foto:''}, cores:{}, mat:{}, ass:{}, plano:{}}; salvar(); aplicarPerfil(); irPara('inicio'); toast('Tudo apagado. Recomeçando.');
+});
+
+/* ══ DATA ══ */
+function dataDeHoje(){
+  const d = new Date();
+  const dias = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+  $('#dataHoje').textContent = `${dias[d.getDay()]}, ${d.getDate()} de ${MESES[d.getMonth()]} de ${d.getFullYear()}`;
+}
+
+/* ══ START ══ */
+async function iniciarApp(){
+  const salvo = await Store.ler(uidAtual);
+  if(salvo) state = Object.assign({perfil:{},cores:{},mat:{},ass:{},plano:{}}, salvo);
+  if(!state.perfil) state.perfil = {};
+  if(!state.plano) state.plano = {};
+  dataDeHoje(); aplicarPerfil(); renderInicio(); renderMaterias('prioridade');
+}
+})();
+</script>
+</body>
+</html>
