@@ -641,6 +641,14 @@ h2.titulo{font-family:var(--serif); font-weight:600; font-size:1.3rem; letter-sp
 .dash-barra-txt{position:absolute; top:12px; left:0; font-family:var(--mono); font-size:9px; letter-spacing:.04em; opacity:.7}
 .cd-vazio{font-family:var(--mono); font-size:11px; color:var(--ink-2); padding:.7rem 0; text-align:center; width:100%}
 .cd-vazio b{color:var(--brand); font-weight:600}
+/* ═══ CICLO SEMANAL ═══ */
+.ciclo-sem{display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:.5rem; margin-top:.8rem}
+.ciclo-mat{display:flex; align-items:center; gap:.6rem; padding:.65rem .8rem; border:1px solid var(--rule); border-radius:var(--r); background:var(--card); box-shadow:var(--shadow); transition:.2s; text-align:left; width:100%}
+.ciclo-mat:hover{transform:translateY(-1px); box-shadow:var(--shadow-lg)}
+.ciclo-mat.feita{background:var(--green-tint); border-color:var(--green-cap-bd)}
+.ciclo-mat span{font-size:12.5px; color:var(--ink-strong); flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.ciclo-ok{font-family:var(--mono); font-size:11px; color:var(--green); font-weight:700; flex:none !important}
+.ciclo-falta{font-family:var(--mono); font-size:9px; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-3); flex:none !important}
 /* ═══ PLANO POST-ITS ═══ */
 .plano-legenda{display:flex; gap:1.2rem; font-family:var(--mono); font-size:9px; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-3); margin-bottom:.6rem}
 .plano-mural{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:.5rem; align-items:start}
