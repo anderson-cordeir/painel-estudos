@@ -404,7 +404,7 @@ h2.titulo{font-family:var(--serif); font-weight:600; font-size:1.3rem; letter-sp
 .dia-inputs select:focus,.dia-inputs input:focus{outline:none; border-color:var(--brand)}
 .reg-lista{display:flex; flex-direction:column; gap:.5rem}
 .reg-item{display:grid; grid-template-columns:auto 1fr auto; gap:.7rem; align-items:center; padding:.6rem .8rem; border:1px solid var(--rule-soft); border-radius:var(--r); background:var(--card-2)}
-.reg-item.agendado{background:var(--azul-soft); border-color:var(--azul-2); border-style:dashed}
+.reg-item.agendado{background:var(--azul-soft); border-color:var(--azul-2)}
 .reg-barra{width:4px; align-self:stretch; border-radius:99px; min-height:28px}
 .reg-txt{min-width:0}
 .reg-tipo{font-family:var(--mono); font-size:9px; letter-spacing:.06em; text-transform:uppercase; font-weight:600}
@@ -562,6 +562,7 @@ h2.titulo{font-family:var(--serif); font-weight:600; font-size:1.3rem; letter-sp
 .revisao-item .ponto{margin-top:4px}
 .revisao-item b{display:block; font-size:12.5px; color:var(--ink-strong); font-weight:600; line-height:1.25}
 .revisao-item span span{font-family:var(--mono); font-size:9px; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-3)}
+.revisao-tipo{font-style:normal; color:var(--militar-deep); font-weight:700}
 .revisao-vazio{font-size:12px; color:var(--ink-3); font-style:italic; padding:.4rem .2rem}
 
 /* ═══ MATÉRIA: edital verticalizado hierárquico ═══ */
@@ -613,10 +614,15 @@ h2.titulo{font-family:var(--serif); font-weight:600; font-size:1.3rem; letter-sp
 .cron-manual-campos{display:flex; gap:.6rem; flex-wrap:wrap; align-items:flex-end; margin-top:.7rem}
 .cron-manual-campos label{font-family:var(--mono); font-size:9px; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-3); display:flex; flex-direction:column; gap:3px}
 .cron-manual-campos input{width:100px; padding:8px 9px; border:1px solid var(--rule); border-radius:6px; background:#FBF6EA; font-size:13px}
+.cron-manual-datas{display:flex; gap:.6rem; flex-wrap:wrap; margin-top:.7rem}
+.cron-manual-datas label{font-family:var(--mono); font-size:9px; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-3); display:flex; flex-direction:column; gap:3px; padding:.5rem .6rem; border-radius:8px; background:var(--militar-soft); border:1px solid var(--militar-2)}
+.cron-manual-datas label:has(input[id^="manDia_agendado"]){background:var(--azul-soft); border-color:var(--azul-2)}
+.cron-manual-datas input{padding:7px 8px; border:1px solid var(--rule); border-radius:6px; background:#fff; font-size:12.5px}
 .man-tipo-linha{display:flex; gap:.4rem; flex-wrap:wrap; margin-top:.7rem}
 .man-tipo-btn{padding:7px 12px; border-radius:99px; border:1px solid var(--rule); background:var(--card); font-family:var(--mono); font-size:10.5px; letter-spacing:.04em; color:var(--ink-2); transition:.2s}
 .man-tipo-btn:hover{border-color:var(--azul)}
 .man-tipo-btn.on{background:var(--militar-deep); border-color:var(--militar-deep); color:var(--card); font-weight:700}
+.man-tipo-btn.agenda.on{background:var(--azul-deep); border-color:var(--azul-deep)}
 .man-tipo-legenda{font-size:11px; color:var(--ink-3); margin-top:.4rem; line-height:1.4}
 /* ── agendado (Início) ── */
 .hoje-item.agendado{background:var(--azul-soft) !important; border-color:var(--azul-2)}
@@ -772,12 +778,18 @@ h2.titulo{font-family:var(--serif); font-weight:600; font-size:1.3rem; letter-sp
 .trello-col-cab b{display:block; font-family:var(--serif); font-size:12px; font-weight:700; color:var(--militar-deep)}
 .trello-col-cab span{font-family:var(--mono); font-size:8.5px; color:var(--ink-3); letter-spacing:.03em}
 .trello-col-corpo{flex:1; padding:.4rem; display:flex; flex-direction:column; gap:.4rem; min-height:80px}
-.trello-card{background:var(--card); border:1px solid var(--rule-soft); border-left:4px solid var(--brand); border-radius:7px; padding:.45rem .55rem; cursor:grab; box-shadow:var(--shadow); transition:.15s; display:flex; flex-direction:column; gap:2px}
+.trello-card{background:var(--card); border:1px solid var(--rule-soft); border-left:4px solid var(--brand); border-radius:7px; padding:.45rem 1.35rem .45rem .55rem; cursor:grab; box-shadow:var(--shadow); transition:.15s; display:flex; flex-direction:column; gap:2px; position:relative}
 .trello-card:hover{transform:translateY(-1px); box-shadow:var(--shadow-lg)}
 .trello-card:active{cursor:grabbing}
 .trello-card.arrastando{opacity:.4}
+.trello-card.agendado{background:var(--azul-soft)}
 .trello-card-nome{font-size:11px; font-weight:600; color:var(--ink-strong); line-height:1.25}
+.trello-card-tipo{font-family:var(--mono); font-size:8px; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-3)}
+.trello-card.agendado .trello-card-tipo{color:var(--azul-deep); font-weight:600}
 .trello-card-min{font-family:var(--mono); font-size:8.5px; color:var(--ink-3)}
+.trello-card-x{position:absolute; top:2px; right:2px; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--ink-3); font-size:13px; line-height:1; opacity:0; transition:.15s}
+.trello-card:hover .trello-card-x{opacity:1}
+.trello-card-x:hover{background:var(--red-soft); color:var(--red)}
 .trello-vazio{font-family:var(--mono); font-size:9px; letter-spacing:.03em; color:var(--ink-3); font-style:italic; text-align:center; padding:.6rem 0}
 /* ═══ LINKS ═══ */
 .links-lista{display:flex; flex-direction:column; gap:.4rem; margin-bottom:.7rem}
@@ -1399,14 +1411,27 @@ function diasDesde(diaStr){
 /* tópicos que caem na régua de revisão espaçada (1, 7, 30 dias) */
 function topicosParaRevisar(){
   const alvos = {1:[], 7:[], 30:[]};
+  const vistos = new Set();
+  const addItem = (mid, topico, diaStr, tipo) => {
+    const dd = diasDesde(diaStr);
+    if(dd !== 1 && dd !== 7 && dd !== 30) return;
+    const m = DADOS.find(x=>x.id===mid); if(!m) return;
+    const chave = mid+'@@'+(topico||'')+'@@'+dd;
+    if(vistos.has(chave)) return;
+    vistos.add(chave);
+    alvos[dd].push({mid, mnome:m.n, topico:topico||'', cor:corDe(m), visto:diaStr, tipo:tipo||'estudo'});
+  };
+  // fonte 1: sessões registradas no Acompanhamento (estudo/revisão — com ou sem tópico específico)
+  state.sessoes.forEach(s=>{
+    if(s.tipo && s.tipo.startsWith('agendado')) return;   // agendado ainda não aconteceu
+    addItem(s.mid, s.topico, s.dia, s.tipo);
+  });
+  // fonte 2: tópicos marcados direto na página da Matéria (dominei/parcial), quando não vieram de sessão
   Object.keys(state.estudo).forEach(ch=>{
     const e = state.estudo[ch];
-    const dd = diasDesde(e.visto);
-    if(dd === 1 || dd === 7 || dd === 30){
-      const [mid, topico] = ch.split('@@');
-      const m = DADOS.find(x=>x.id===mid);
-      if(m) alvos[dd].push({mid, mnome:m.n, topico, cor:corDe(m), visto:e.visto});
-    }
+    if(!e.visto) return;
+    const [mid, topico] = ch.split('@@');
+    addItem(mid, topico, e.visto, 'estudo');
   });
   return alvos;
 }
@@ -1812,11 +1837,14 @@ function renderInicio(){
     return `<div class="revisao-col">
       <div class="revisao-cab"><b>${b.tit}</b><span>${b.sub}</span><i class="revisao-badge ${itens.length?'tem':''}">${itens.length}</i></div>
       <div class="revisao-itens">
-        ${itens.length ? itens.map(it=>`
-          <button class="revisao-item" data-mat="${it.mid}">
+        ${itens.length ? itens.map(it=>{
+          const temTopico = !!it.topico;
+          const ROT = {estudo:'estudo', revisao:'revisão'};
+          return `<button class="revisao-item" data-mat="${it.mid}">
             <i class="ponto" style="background:${it.cor}"></i>
-            <span><b>${esc(it.topico)}</b><span>${esc(it.mnome)}</span></span>
-          </button>`).join('')
+            <span><b>${temTopico?esc(it.topico):esc(it.mnome)}</b><span>${temTopico?esc(it.mnome)+' · ':''}<i class="revisao-tipo">${ROT[it.tipo]||'estudo'}</i></span></span>
+          </button>`;
+        }).join('')
         : '<div class="revisao-vazio">Nada para revisar neste intervalo.</div>'}
       </div>
     </div>`;
@@ -2027,7 +2055,7 @@ let topicoAberto = null;
 /* ══ ACOMPANHAMENTO ══ */
 let perAtivo = 1;   // 1=hoje,7=semana,30=mês,0=tudo
 let cron = { ativo:false, ini:0, acumulado:0, mid:'', topico:'', t:null };
-let manTipo = 'estudo';   // 'estudo' | 'revisao' | 'agendado_estudo' | 'agendado_revisao'
+let manTipos = new Set(['estudo']);   // combina: no máx. 1 de {estudo,revisao} + qualquer nº de {agendado_estudo,agendado_revisao}
 let manAberto = false;
 
 /* gráfico de pizza SVG (fatias por matéria) */
@@ -2070,20 +2098,34 @@ function renderAcompanhamento(){
     <details class="cron-manual" id="manDetails" ${manAberto?'open':''}>
       <summary>Adicionar manualmente</summary>
       <div class="man-tipo-linha">
-        <button class="man-tipo-btn ${manTipo==='estudo'?'on':''}" data-mantipo="estudo">📖 Estudei</button>
-        <button class="man-tipo-btn ${manTipo==='revisao'?'on':''}" data-mantipo="revisao">🔁 Revisei</button>
-        <button class="man-tipo-btn ${manTipo==='agendado_estudo'?'on':''}" data-mantipo="agendado_estudo">📅 Agendar estudo</button>
-        <button class="man-tipo-btn ${manTipo==='agendado_revisao'?'on':''}" data-mantipo="agendado_revisao">📅 Agendar revisão</button>
+        <button class="man-tipo-btn ${manTipos.has('estudo')?'on':''}" data-mantipo="estudo">📖 Estudei</button>
+        <button class="man-tipo-btn ${manTipos.has('revisao')?'on':''}" data-mantipo="revisao">🔁 Revisei</button>
+        <button class="man-tipo-btn agenda ${manTipos.has('agendado_estudo')?'on':''}" data-mantipo="agendado_estudo">📅 Agendar estudo</button>
+        <button class="man-tipo-btn agenda ${manTipos.has('agendado_revisao')?'on':''}" data-mantipo="agendado_revisao">📅 Agendar revisão</button>
       </div>
-      <div class="man-tipo-legenda">${manTipo.startsWith('agendado') ? 'Marca a matéria/tópico para uma data futura — aparece na aba Início como agendado.' : 'Tempo e questões são opcionais. Preencha só o que fizer sentido.'}</div>
+      ${(() => {
+        const feitoSel = manTipos.has('estudo') ? 'estudo' : (manTipos.has('revisao') ? 'revisao' : null);
+        const agendaSel = [...manTipos].filter(t=>t.startsWith('agendado'));
+        const ROT_DIA = {estudo:'Estudei em', revisao:'Revisei em', agendado_estudo:'Agendar estudo para', agendado_revisao:'Agendar revisão para'};
+        let legenda;
+        if(feitoSel && agendaSel.length) legenda = 'Combina os dois: registra o que você já fez e agenda o próximo passo. Cada categoria marcada tem sua própria data — ajuste abaixo.';
+        else if(agendaSel.length) legenda = 'Marca a matéria/tópico para uma data futura — aparece na aba Início como agendado.';
+        else legenda = 'Tempo e questões são opcionais. Preencha só o que fizer sentido. Clique em "Agendar estudo/revisão" para também marcar o próximo passo.';
+        const label = feitoSel && agendaSel.length ? 'Registrar e agendar' : (agendaSel.length && !feitoSel ? 'Agendar' : 'Adicionar');
+        const daquiA = n => somaDias(hojeChave(), n);
+        return `<div class="man-tipo-legenda">${legenda}</div>
       <div class="cron-manual-campos">
-        ${!manTipo.startsWith('agendado') ? `
+        ${feitoSel ? `
         <label>Minutos <input type="number" min="0" id="manMin" placeholder="opcional"></label>
         <label>Questões <input type="number" min="0" id="manQ" placeholder="0"></label>
         <label>Acertos <input type="number" min="0" id="manAc" placeholder="0"></label>` : ''}
-        <label>Dia <input type="date" id="manDia" value="${hojeChave()}"></label>
-        <button class="btn" data-cron="manual">${manTipo.startsWith('agendado')?'Agendar':'Adicionar'}</button>
       </div>
+      <div class="cron-manual-datas">
+        ${feitoSel ? `<label>${ROT_DIA[feitoSel]} <input type="date" id="manDia_${feitoSel}" value="${hojeChave()}"></label>` : ''}
+        ${agendaSel.map(t=>`<label>${ROT_DIA[t]} <input type="date" id="manDia_${t}" value="${daquiA(7)}"></label>`).join('')}
+      </div>
+      <button class="btn" data-cron="manual">${label}</button>`;
+      })()}
     </details>`;
   // preenche tópicos da matéria escolhida
   atualizarCronTopicos();
@@ -2168,16 +2210,20 @@ function renderTrello(){
   const dias = diasDaSemana(domingo);
   const nomesDia = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
   const hk = hojeChave();
+  const ROTULOS = {estudo:'estudo', revisao:'revisão', agendado_estudo:'agendado · estudo', agendado_revisao:'agendado · revisão'};
   el.innerHTML = dias.map((chave,i)=>{
-    const itens = matsDoDia(chave);
+    const itens = state.sessoes.filter(s=>s.dia===chave);
     return `<div class="trello-col ${chave===hk?'hoje':''}" data-drop="${chave}">
       <div class="trello-col-cab"><b>${nomesDia[i]}</b><span>${dataCurta(chave)}</span></div>
       <div class="trello-col-corpo">
-        ${itens.length ? itens.map(it=>{
-          const mat = DADOS.find(x=>x.id===it.mid);
-          return `<div class="trello-card" draggable="true" data-drag-mid="${it.mid}" data-drag-dia="${chave}" style="border-left-color:${mat?corDe(mat):'#999'}">
-            <span class="trello-card-nome">${mat?esc(mat.n):it.mid}</span>
-            ${it.min?`<span class="trello-card-min">${fmtMin(it.min)}</span>`:''}
+        ${itens.length ? itens.map(s=>{
+          const mat = DADOS.find(x=>x.id===s.mid);
+          const t = s.tipo || 'estudo';
+          return `<div class="trello-card ${t.startsWith('agendado')?'agendado':''}" draggable="true" data-drag-id="${s.id}" data-drag-dia="${chave}" style="border-left-color:${mat?corDe(mat):'#999'}">
+            <button class="trello-card-x" data-sessao-x="${s.id}" aria-label="Excluir">×</button>
+            <span class="trello-card-nome">${mat?esc(mat.n):s.mid}</span>
+            <span class="trello-card-tipo">${ROTULOS[t]}</span>
+            ${s.min?`<span class="trello-card-min">${fmtMin(s.min)}</span>`:''}
           </div>`;
         }).join('') : `<div class="trello-vazio">sem estudo</div>`}
       </div>
@@ -2202,27 +2248,46 @@ function acaoCron(acao){
   if(acao==='salvar'){
     const min = Math.round(cronMinAtual());
     if(min < 1){ toast('O cronômetro precisa de ao menos 1 minuto.'); return; }
-    const tipoCron = manTipo.startsWith('agendado') ? manTipo.replace('agendado_','') : manTipo;
-    registrarSessao({mid:cron.mid, topico:cron.topico, min, q:0, ac:0, tipo:tipoCron});
+    if(manTipos.size===0){ toast('Selecione ao menos uma opção (Estudei, Revisei ou Agendar) abaixo.'); return; }
+    const ROTULOS = {estudo:'estudo', revisao:'revisão', agendado_estudo:'estudo agendado', agendado_revisao:'revisão agendada'};
+    const rotulos = [];
+    manTipos.forEach(t=>{
+      if(t==='estudo' || t==='revisao'){
+        registrarSessao({mid:cron.mid, topico:cron.topico, min, q:0, ac:0, tipo:t});
+      }else{
+        registrarSessao({mid:cron.mid, topico:cron.topico, min:0, q:0, ac:0, tipo:t});
+      }
+      rotulos.push(ROTULOS[t]);
+    });
     cron.ativo=false; cron.acumulado=0; cron.ini=0; clearInterval(cron.t);
     salvar(); renderAcompanhamento(); renderInicio();
-    toast(`Sessão de ${fmtMin(min)} registrada.`); return;
+    toast(`${fmtMin(min)} registrados — ${rotulos.join(' + ')}.`); return;
   }
   if(acao==='manual'){
-    const dia = $('#manDia').value || hojeChave();
     manAberto = true;
-    if(manTipo.startsWith('agendado')){
-      registrarSessao({mid:cron.mid, topico:cron.topico, min:0, q:0, ac:0, dia, tipo:manTipo});
-      salvar(); renderAcompanhamento(); renderInicio(); if(vistaAtual==='calendario') renderCalendario();
-      toast(`${manTipo==='agendado_revisao'?'Revisão agendada':'Estudo agendado'} para ${dataCurta(dia)}.`); return;
+    if(manTipos.size===0){ toast('Selecione ao menos uma opção (Estudei, Revisei ou Agendar) acima.'); return; }
+    const feitoSel = manTipos.has('estudo') ? 'estudo' : (manTipos.has('revisao') ? 'revisao' : null);
+    let min=0, q=0, ac=0;
+    if(feitoSel){
+      min = parseInt(($('#manMin')&&$('#manMin').value)||0,10);
+      q = parseInt(($('#manQ')&&$('#manQ').value)||0,10);
+      ac = parseInt(($('#manAc')&&$('#manAc').value)||0,10);
+      if(ac>q){ toast('Acertos não podem passar do total.'); return; }
     }
-    const min = parseInt(($('#manMin')&&$('#manMin').value)||0,10);
-    const q = parseInt(($('#manQ')&&$('#manQ').value)||0,10);
-    const ac = parseInt(($('#manAc')&&$('#manAc').value)||0,10);
-    if(ac>q){ toast('Acertos não podem passar do total.'); return; }
-    registrarSessao({mid:cron.mid, topico:cron.topico, min, q, ac, dia, tipo:manTipo});
+    const ROTULOS = {estudo:'estudo registrado', revisao:'revisão registrada', agendado_estudo:'estudo agendado', agendado_revisao:'revisão agendada'};
+    const rotulos = [];
+    manTipos.forEach(t=>{
+      const campoDia = $('#manDia_'+t);
+      const dia = (campoDia && campoDia.value) || hojeChave();
+      if(t==='estudo' || t==='revisao'){
+        registrarSessao({mid:cron.mid, topico:cron.topico, min, q, ac, dia, tipo:t});
+      }else{
+        registrarSessao({mid:cron.mid, topico:cron.topico, min:0, q:0, ac:0, dia, tipo:t});
+      }
+      rotulos.push(`${ROTULOS[t]} (${dataCurta(dia)})`);
+    });
     salvar(); renderAcompanhamento(); renderInicio(); if(vistaAtual==='calendario') renderCalendario();
-    toast(manTipo==='revisao' ? 'Revisão registrada.' : 'Sessão adicionada.'); return;
+    toast(rotulos.join(' + ') + '.'); return;
   }
 }
 
@@ -2530,7 +2595,16 @@ document.addEventListener('click', e=>{
   const cronBtn = e.target.closest('[data-cron]');
   if(cronBtn){ acaoCron(cronBtn.dataset.cron); return; }
   const manTipoBtn = e.target.closest('[data-mantipo]');
-  if(manTipoBtn){ manTipo = manTipoBtn.dataset.mantipo; manAberto = true; renderAcompanhamento(); return; }
+  if(manTipoBtn){
+    const t = manTipoBtn.dataset.mantipo;
+    if(t==='estudo' || t==='revisao'){
+      if(manTipos.has(t)){ manTipos.delete(t); }
+      else { manTipos.delete('estudo'); manTipos.delete('revisao'); manTipos.add(t); }
+    }else{
+      if(manTipos.has(t)){ manTipos.delete(t); } else { manTipos.add(t); }
+    }
+    manAberto = true; renderAcompanhamento(); return;
+  }
   const perBtn = e.target.closest('#filtrosPeriodo .filtro');
   if(perBtn){ perAtivo = +perBtn.dataset.per; renderAcompanhamento(); return; }
   const sessX = e.target.closest('[data-sessao-x]');
@@ -2609,7 +2683,7 @@ document.addEventListener('click', e=>{
 /* ══ TRELLO: arrastar cartão de matéria entre dias ══ */
 document.addEventListener('dragstart', e=>{
   const card = e.target.closest('.trello-card');
-  if(card){ e.dataTransfer.setData('text/plain', card.dataset.dragMid+'|'+card.dataset.dragDia); card.classList.add('arrastando'); }
+  if(card){ e.dataTransfer.setData('text/plain', card.dataset.dragId); card.classList.add('arrastando'); }
 });
 document.addEventListener('dragend', e=>{
   const card = e.target.closest('.trello-card'); if(card) card.classList.remove('arrastando');
@@ -2626,13 +2700,12 @@ document.addEventListener('drop', e=>{
   const col = e.target.closest('[data-drop]');
   if(!col) return;
   e.preventDefault(); col.classList.remove('drop-ativo');
-  const data = e.dataTransfer.getData('text/plain'); if(!data) return;
-  const [mid, diaOrigem] = data.split('|');
+  const sessId = e.dataTransfer.getData('text/plain'); if(!sessId) return;
   const diaDestino = col.dataset.drop;
-  if(diaOrigem === diaDestino) return;
-  let n = 0;
-  state.sessoes.forEach(s=>{ if(s.mid===mid && s.dia===diaOrigem){ s.dia = diaDestino; n++; } });
-  if(n){ salvar(); renderInicio(); toast(`${n} sessão(ões) movida(s) para ${dataCurta(diaDestino)}.`); }
+  const s = state.sessoes.find(x=>x.id===sessId);
+  if(!s || s.dia === diaDestino) return;
+  s.dia = diaDestino;
+  salvar(); renderInicio(); toast(`Movido para ${dataCurta(diaDestino)}.`);
 });
 document.addEventListener('input', e=>{
   // anotação de tópico (detalhe da matéria)
